@@ -1,0 +1,39 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAuth() { return request.auth != null; }
+    function uid() { return request.auth.uid; }
+    function role() { return get(/databases/$(database)/documents/users/$(uid())).data.role; }
+    function isAdmin() { return isAuth() && role() == 'admin'; }
+    function isTeacher() { return isAuth() && (role() == 'teacher' || role() == 'admin'); }
+    function schoolId() { return get(/databases/$(database)/documents/users/$(uid())).data.schoolId; }
+    function sameSchool(sid) { return schoolId() == sid; }
+
+    match /users/{userId} {
+      allow read: if isAuth() && (uid() == userId || isAdmin());
+      allow create: if isAuth() && uid() == userId;
+      allow update: if isAuth() && (uid() == userId || isAdmin());
+      allow delete: if isAdmin();
+    }
+    match /schools/{schoolId} {
+      allow read: if isAuth();
+      allow write: if isAdmin();
+    }
+    match /courses/{courseId} {
+      allow read: if isAuth();
+      allow write: if isTeacher();
+    }
+    match /classes/{classId} {
+      allow read: if isAuth();
+      allow write: if isTeacher();
+    }
+    match /progress/{progressId} {
+      allow read: if isAuth();
+      allow write: if isAuth();
+    }
+    match /alerts/{alertId} {
+      allow read: if isAuth();
+      allow write: if isAuth();
+    }
+  }
+}
