@@ -5,87 +5,162 @@ import {
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/firebase/config';
 
-// ── Schools ───────────────────────────────────────────────────────────────────
-export const getSchool    = (id)   => getDoc(doc(db,'schools',id)).then(s=>s.data());
-export const createSchool = (data) => addDoc(collection(db,'schools'),{...data,createdAt:serverTimestamp()}).then(r=>r.id);
-export const updateSchool = (id,d) => updateDoc(doc(db,'schools',id),{...d,updatedAt:serverTimestamp()});
+// ── UTILIDAD: Validación de Seguridad 🛡️ ─────────────────────────────────────
+const isValidId = (id) => id && typeof id === 'string' && id.trim() !== '';
 
-// ── Users ─────────────────────────────────────────────────────────────────────
-export const getUser = (uid) => getDoc(doc(db,'users',uid)).then(s=>({id:s.id,...s.data()}));
-
-export const getUsersBySchool = async (schoolId, role=null) => {
-  let q = query(collection(db,'users'), where('schoolId','==',schoolId));
-  if (role) q = query(q, where('role','==',role));
-  const snap = await getDocs(q);
-  return snap.docs.map(d=>({id:d.id,...d.data()}));
+// ── Schools (Instituciones) ───────────────────────────────────────────────────
+export const getSchool = async (id) => {
+  if (!isValidId(id)) return null;
+  try {
+    const s = await getDoc(doc(db, 'schools', id));
+    return s.exists() ? { id: s.id, ...s.data() } : null;
+  } catch (e) { return null; }
 };
 
-export const updateUser = (uid,d) => updateDoc(doc(db,'users',uid),{...d,updatedAt:serverTimestamp()});
-export const deleteUser = (uid)   => deleteDoc(doc(db,'users',uid));
+export const createSchool = (data) => 
+  addDoc(collection(db, 'schools'), { ...data, createdAt: serverTimestamp() }).then(r => r.id);
 
-// ── Courses ───────────────────────────────────────────────────────────────────
-export const getCoursesBySchool  = async (schoolId)   => {
-  const q = query(collection(db,'courses'),where('schoolId','==',schoolId),orderBy('createdAt','desc'));
-  const s = await getDocs(q); return s.docs.map(d=>({id:d.id,...d.data()}));
+// ── Users (Alumnos y Profesores) ──────────────────────────────────────────────
+export const getUser = async (uid) => {
+  if (!isValidId(uid)) return null;
+  try {
+    const s = await getDoc(doc(db, 'users', uid));
+    return s.exists() ? { id: s.id, ...s.data() } : null;
+  } catch (e) { return null; }
 };
+
+export const getUsersBySchool = async (schoolId, role = null) => {
+  if (!isValidId(schoolId)) return [];
+  try {
+    let q = query(collection(db, 'users'), where('schoolId', '==', schoolId));
+    if (role) q = query(q, where('role', '==', role));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (e) { return []; }
+};
+
+export const updateUser = (uid, d) => 
+  updateDoc(doc(db, 'users', uid), { ...d, updatedAt: serverTimestamp() });
+
+export const deleteUser = (uid) => deleteDoc(doc(db, 'users', uid));
+
+// ── ClassGroups (Aulas / Cursos Base) 🏫 ──────────────────────────────────────
+export const getClassGroupsBySchool = async (schoolId) => {
+  if (!isValidId(schoolId)) return [];
+  try {
+    const q = query(collection(db, 'classGroups'), where('schoolId', '==', schoolId));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (e) { return []; }
+};
+
+// ── Courses (Materias / Asignaturas) 📚 ───────────────────────────────────────
+export const getCourse = async (id) => {
+  if (!isValidId(id)) return null;
+  try {
+    const s = await getDoc(doc(db, 'courses', id));
+    return s.exists() ? { id: s.id, ...s.data() } : null;
+  } catch (e) { return null; }
+};
+
+export const getCoursesBySchool = async (schoolId) => {
+  if (!isValidId(schoolId)) return [];
+  try {
+    const q = query(collection(db, 'courses'), where('schoolId', '==', schoolId));
+    const s = await getDocs(q);
+    return s.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (e) { return []; }
+};
+
 export const getCoursesByTeacher = async (teacherId) => {
-  const q = query(collection(db,'courses'),where('teacherId','==',teacherId),orderBy('createdAt','desc'));
-  const s = await getDocs(q); return s.docs.map(d=>({id:d.id,...d.data()}));
+  if (!isValidId(teacherId)) return [];
+  try {
+    const q = query(collection(db, 'courses'), where('teacherId', '==', teacherId));
+    const s = await getDocs(q);
+    return s.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (e) { return []; }
 };
-export const createCourse = (data) => addDoc(collection(db,'courses'),{...data,createdAt:serverTimestamp()}).then(r=>r.id);
-export const updateCourse = (id,d) => updateDoc(doc(db,'courses',id),{...d,updatedAt:serverTimestamp()});
-export const deleteCourse = (id)   => deleteDoc(doc(db,'courses',id));
-export const getCourse    = (id)   => getDoc(doc(db,'courses',id)).then(s=>({id:s.id,...s.data()}));
 
-// ── Classes ───────────────────────────────────────────────────────────────────
+export const createCourse = (data) => 
+  addDoc(collection(db, 'courses'), { ...data, createdAt: serverTimestamp() }).then(r => r.id);
+
+export const deleteCourse = (id) => deleteDoc(doc(db, 'courses', id));
+
+// ── Classes (Contenido de las Lecciones) 📄 ───────────────────────────────────
+
+// 🔥 AQUÍ ESTÁ LA FUNCIÓN QUE FALTABA 🔥
+export const getClass = async (id) => {
+  if (!isValidId(id)) return null;
+  try {
+    const s = await getDoc(doc(db, 'classes', id));
+    return s.exists() ? { id: s.id, ...s.data() } : null;
+  } catch (e) { 
+    console.error("Error en getClass:", e);
+    return null; 
+  }
+};
+
 export const getClassesByCourse = async (courseId) => {
-  const q = query(collection(db,'classes'),where('courseId','==',courseId),orderBy('createdAt','desc'));
-  const s = await getDocs(q); return s.docs.map(d=>({id:d.id,...d.data()}));
-};
-export const getClass    = (id)    => getDoc(doc(db,'classes',id)).then(s=>({id:s.id,...s.data()}));
-export const createClass = (data)  => addDoc(collection(db,'classes'),{...data,createdAt:serverTimestamp()}).then(r=>r.id);
-export const deleteClass = (id)    => deleteDoc(doc(db,'classes',id));
-export const listenClasses = (courseId, cb) => {
-  const q = query(collection(db,'classes'),where('courseId','==',courseId),orderBy('createdAt','desc'));
-  return onSnapshot(q, s => cb(s.docs.map(d=>({id:d.id,...d.data()}))));
+  if (!isValidId(courseId)) return [];
+  try {
+    const q = query(collection(db, 'classes'), where('courseId', '==', courseId));
+    const s = await getDocs(q);
+    return s.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (e) { return []; }
 };
 
-// ── Progress ──────────────────────────────────────────────────────────────────
+export const createClass = (data) => 
+  addDoc(collection(db, 'classes'), { ...data, createdAt: serverTimestamp() }).then(r => r.id);
+
+export const deleteClass = (id) => deleteDoc(doc(db, 'classes', id));
+
+export const listenClasses = (courseId, cb) => {
+  if (!isValidId(courseId)) return () => {}; 
+  const q = query(collection(db, 'classes'), where('courseId', '==', courseId));
+  return onSnapshot(q, s => cb(s.docs.map(d => ({ id: d.id, ...d.data() }))));
+};
+
+// ── Progress & Analytics (Métricas Reales) 📊 ─────────────────────────────────
 export const saveProgress = async (data) => {
   const id = `${data.studentId}_${data.classId}_${data.styleId}`;
-  await setDoc(doc(db,'progress',id),{...data,updatedAt:serverTimestamp()},{merge:true});
+  await setDoc(doc(db, 'progress', id), { ...data, updatedAt: serverTimestamp() }, { merge: true });
 };
 
 export const getProgressByStudent = async (studentId, schoolId) => {
-  const q = query(collection(db,'progress'),where('studentId','==',studentId),where('schoolId','==',schoolId),orderBy('updatedAt','desc'),limit(100));
-  const s = await getDocs(q); return s.docs.map(d=>({id:d.id,...d.data()}));
+  if (!isValidId(studentId)) return [];
+  try {
+    const q = query(collection(db, 'progress'), where('studentId', '==', studentId), where('schoolId', '==', schoolId));
+    const s = await getDocs(q);
+    return s.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (e) { return []; }
 };
 
 export const getProgressByCourse = async (courseId) => {
-  const q = query(collection(db,'progress'),where('courseId','==',courseId));
-  const s = await getDocs(q); return s.docs.map(d=>({id:d.id,...d.data()}));
+  if (!isValidId(courseId)) return [];
+  try {
+    const q = query(collection(db, 'progress'), where('courseId', '==', courseId));
+    const s = await getDocs(q);
+    return s.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (e) { return []; }
 };
 
 export const getProgressBySchool = async (schoolId) => {
-  const q = query(collection(db,'progress'),where('schoolId','==',schoolId),orderBy('updatedAt','desc'),limit(500));
-  const s = await getDocs(q); return s.docs.map(d=>({id:d.id,...d.data()}));
+  if (!isValidId(schoolId)) return [];
+  try {
+    const q = query(collection(db, 'progress'), where('schoolId', '==', schoolId), limit(1000));
+    const s = await getDocs(q);
+    return s.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (e) { return []; }
 };
 
-// ── Alerts ────────────────────────────────────────────────────────────────────
-export const createAlert = (data) => addDoc(collection(db,'alerts'),{...data,createdAt:serverTimestamp(),read:false});
-export const markAlertRead = (id)  => updateDoc(doc(db,'alerts',id),{read:true});
-export const getAlertsBySchool = async (schoolId) => {
-  const q = query(collection(db,'alerts'),where('schoolId','==',schoolId),orderBy('createdAt','desc'),limit(50));
-  const s = await getDocs(q); return s.docs.map(d=>({id:d.id,...d.data()}));
-};
-export const getAlertsByTeacher = async (teacherId) => {
-  const q = query(collection(db,'alerts'),where('teacherId','==',teacherId),where('read','==',false),orderBy('createdAt','desc'));
-  const s = await getDocs(q); return s.docs.map(d=>({id:d.id,...d.data()}));
-};
-
-// ── File Upload ───────────────────────────────────────────────────────────────
+// ── File Upload (Firebase Storage) 📁 ──────────────────────────────────────────
 export const uploadFile = async (file, path) => {
-  const r = ref(storage, path);
-  await uploadBytes(r, file);
-  return getDownloadURL(r);
+  try {
+    const r = ref(storage, path);
+    await uploadBytes(r, file);
+    return getDownloadURL(r);
+  } catch (e) {
+    console.error("Error subiendo archivo:", e);
+    return null;
+  }
 };
