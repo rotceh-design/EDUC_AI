@@ -1,379 +1,226 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useDropzone } from 'react-dropzone';
+// src/pages/teacher/TeacherDashboard.jsx
+// FIX: usa profile.id (Firestore doc ID) en vez de user.uid para buscar cursos.
+// Los cursos fueron creados con teacherId = profile.id (doc ID aleatorio del admin).
+
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { C, STYLES } from '@/theme';
-import { Btn, Textarea, Alert, Spinner, Card, Badge, SectionHeader, EmptyState, Tabs, Modal, Select } from '@/components/ui';
+import { C } from '@/theme';
+import { Card, StatCard, SectionHeader, EmptyState, Spinner, Badge, Btn, Alert } from '@/components/ui';
 import Navbar from '@/components/Navbar';
-import RiskBadge from '@/components/RiskBadge';
-import { getCourse, listenClasses, createClass, deleteClass, getUsersBySchool } from '@/services/db';
-import { getAtRiskStudents } from '@/services/analyticsService';
-import { generateLearningStyles, extractTextFromPDF, analyzeDropoutRisk } from '@/services/aiService';
-import { doc, updateDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase/config';
 
-// ── ICONOS SVG FUTURISTAS (Para el Modal de Asignación) ──────────────────────
+// ── Iconos ────────────────────────────────────────────────────────────────────
 const Ico = {
-  Student: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>,
-  Plus: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  Book:    ({s=20,c="currentColor"}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
+  Users:   ({s=20,c="currentColor"}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+  Alert:   ({s=20,c="currentColor"}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>,
+  Chart:   ({s=20,c="currentColor"}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 20V10M12 20V4M6 20v-4"/></svg>,
+  Clock:   ({s=20,c="currentColor"}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+  Star:    ({s=20,c="currentColor"}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+  Arrow:   ({s=20,c="currentColor"}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>,
 };
 
-export default function TeacherCourse() {
-  const { courseId }    = useParams();
-  const { user, schoolId } = useAuth();
-  const navigate        = useNavigate();
-  const [course, setCourse]   = useState(null);
-  const [classes, setClasses] = useState([]);
-  const [students, setStudents] = useState([]);
-  const [allSchoolStudents, setAllSchoolStudents] = useState([]); // Todos los alumnos del colegio
-  
-  const [tab, setTab]   = useState('Clases');
-  const [text, setText] = useState('');
-  const [file, setFile] = useState(null);
-  const [loading, setLoading]   = useState(false);
-  const [pageLoad, setPageLoad] = useState(true);
-  
-  const [error, setError]       = useState('');
-  const [success, setSuccess]   = useState('');
-  
-  const [analyzing, setAnalyzing] = useState(null); 
-  const [aiInsight, setAiInsight] = useState(null); 
+const getRiskColor = (score) => score <= 39 ? C.red : score <= 69 ? C.amber : C.green;
+const getRiskLabel = (score) => score <= 39 ? '🔴 En riesgo' : score <= 69 ? '🟡 Observación' : '🟢 Bien';
 
-  // Modal de Asignación de Alumnos
-  const [assignModal, setAssignModal] = useState(false);
-  const [selectedStudentId, setSelectedStudentId] = useState('');
-  const [assigning, setAssigning] = useState(false);
+export default function TeacherDashboard() {
+  const { user, profile, schoolId } = useAuth();
+  const navigate = useNavigate();
 
-  const loadData = async () => {
-    try {
-      const [c, s, allS] = await Promise.all([
-        getCourse(courseId), 
-        getAtRiskStudents(courseId, schoolId),
-        getUsersBySchool(schoolId, 'student')
-      ]);
-      setCourse(c); 
-      setStudents(s); 
-      setAllSchoolStudents(allS);
-      setPageLoad(false);
-    } catch(e) {
-      console.error(e);
-      setPageLoad(false);
-    }
-  };
+  const [courses,     setCourses]     = useState([]);
+  const [classCounts, setClassCounts] = useState({});
+  const [students,    setStudents]    = useState({});  // { courseId: [students] }
+  const [loading,     setLoading]     = useState(true);
+  const [loadErr,     setLoadErr]     = useState('');
+
+  // FIX CRÍTICO: usa profile.id (Firestore doc ID) para buscar cursos.
+  // Los cursos del admin fueron guardados con teacherId = profile.id, NO user.uid.
+  const teacherId = profile?.id || user?.uid;
 
   useEffect(() => {
+    if (!teacherId || !schoolId) return;
     loadData();
-    const unsub = listenClasses(courseId, setClasses);
-    return unsub;
-  }, [courseId, schoolId]);
+  }, [teacherId, schoolId]);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: { 'application/pdf':[], 'image/*':[] },
-    maxFiles: 1,
-    onDrop: useCallback(([f]) => { setFile(f); setError(''); }, []),
-  });
-
-  const handlePublish = async () => {
-    setError(''); setSuccess('');
-    let rawContent = text.trim();
-    if (file) {
-      setLoading(true);
-      try {
-        if (file.type === 'application/pdf') rawContent = await extractTextFromPDF(file);
-        else rawContent = `[Imagen de clase: ${file.name}]`;
-      } catch { setError('Error procesando el archivo.'); setLoading(false); return; }
-    }
-    if (!rawContent) { setError('Escribe el contenido o sube un archivo.'); setLoading(false); return; }
+  const loadData = async () => {
     setLoading(true);
     try {
-      const content = await generateLearningStyles(rawContent, course.subject, course.grade);
-      await createClass({ courseId, schoolId, teacherId: user.uid, rawContent, content, subject: course.subject, grade: course.grade });
-      setText(''); setFile(null);
-      setSuccess('✓ Clase publicada con 5 estilos de aprendizaje');
-      setTimeout(() => setSuccess(''), 4000);
-    } catch(e) { setError(e.message || 'Error generando contenido. Intenta de nuevo.'); }
+      // 1. Buscar cursos por teacherId = Firestore doc ID del profesor
+      const cSnap = await getDocs(
+        query(collection(db, 'courses'), where('teacherId', '==', teacherId))
+      );
+      const myCoursess = cSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      setCourses(myCoursess);
+
+      // 2. Para cada curso, contar clases publicadas
+      const counts = {};
+      for (const course of myCoursess) {
+        const clSnap = await getDocs(
+          query(collection(db, 'classes'), where('courseId', '==', course.id))
+        );
+        counts[course.id] = clSnap.size;
+      }
+      setClassCounts(counts);
+
+      // 3. Para cada curso, contar alumnos matriculados en esa aula
+      const studs = {};
+      for (const course of myCoursess) {
+        if (!course.classGroupId) { studs[course.id] = []; continue; }
+        const sSnap = await getDocs(
+          query(
+            collection(db, 'users'),
+            where('classGroupId', '==', course.classGroupId),
+            where('role', '==', 'student')
+          )
+        );
+        studs[course.id] = sSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      }
+      setStudents(studs);
+
+    } catch (e) {
+      console.error('TeacherDashboard load error:', e);
+      setLoadErr(e.message);
+    }
     setLoading(false);
   };
 
-  const handleAnalyzeStudent = async (student) => {
-    setAnalyzing(student.id); setAiInsight(null);
-    try {
-      const data = await analyzeDropoutRisk({ nombre: student.name, ...student.metrics });
-      setAiInsight({ studentId: student.id, data });
-    } catch(e) { console.error(e); }
-    setAnalyzing(null);
-  };
+  const totalClasses  = Object.values(classCounts).reduce((a, b) => a + b, 0);
+  const totalStudents = Object.values(students).reduce((a, arr) => a + arr.length, 0);
 
-  // NUEVO: Función para que el profesor vincule un alumno al curso
-  const handleAssignStudent = async () => {
-    if (!selectedStudentId) return;
-    setAssigning(true);
-    setError('');
-    
-    try {
-      const studentToAssign = allSchoolStudents.find(s => s.id === selectedStudentId);
-      const studentRef = doc(db, 'users', selectedStudentId);
-      const newCoursesList = [...(studentToAssign.enrolledCourses || []), courseId];
-
-      await updateDoc(studentRef, { enrolledCourses: newCoursesList });
-      
-      setSuccess(`✓ ${studentToAssign.name} ha sido vinculado al curso exitosamente.`);
-      setAssignModal(false);
-      setSelectedStudentId('');
-      
-      // Recargar lista de estudiantes del curso para que aparezca
-      await loadData();
-      setTimeout(() => setSuccess(''), 4000);
-    } catch (e) {
-      setError('Ocurrió un error al intentar vincular al alumno.');
-      console.error(e);
-    }
-    setAssigning(false);
-  };
-
-  const exportStudentsToExcel = () => {
-    const headers = ['Nombre', 'Nivel de Riesgo', 'Score IA', 'Sesiones Totales', 'Promedio Quiz', 'Último Acceso'];
-    const rows = students.map(s => [
-      s.name,
-      s.metrics?.riskScore <= 39 ? 'Riesgo Alto' : s.metrics?.riskScore <= 69 ? 'Observación' : 'Bien',
-      s.metrics?.riskScore || 100,
-      s.metrics?.totalSessions || 0,
-      s.metrics?.avgQuizScore ? `${s.metrics.avgQuizScore}%` : 'N/A',
-      s.metrics?.daysSinceLastActivity === 999 ? 'Nunca' : `Hace ${s.metrics?.daysSinceLastActivity} días`
-    ]);
-    
-    const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + 
-      [headers.join(';'), ...rows.map(e => e.join(';'))].join('\n');
-      
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Alumnos_${course?.name?.replace(/ /g, '_')}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  if (pageLoad) return <div style={{ minHeight:'100vh',background:C.bg,display:'flex',alignItems:'center',justifyContent:'center' }}><Spinner size={40} /></div>;
-
-  const atRiskCount    = students.filter(s=>s.metrics?.riskScore<=39).length;
-  const watchingCount  = students.filter(s=>s.metrics?.riskScore>39&&s.metrics?.riskScore<=69).length;
+  // Hora del día → saludo
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Buenos días' : hour < 18 ? 'Buenas tardes' : 'Buenas noches';
 
   return (
     <div style={{ minHeight:'100vh', background:C.bg }}>
       <Navbar />
       <main style={{ maxWidth:'1000px', margin:'0 auto', padding:'30px 20px' }}>
 
-        <div className="anim-fade-up" style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'26px' }}>
-          <button onClick={()=>navigate('/teacher')} style={{ background:`${C.accent}15`,border:`1px solid ${C.accent}30`,borderRadius:'8px',padding:'6px 12px',cursor:'pointer',color:C.accent,fontSize:'13px',fontWeight:600 }}>← Volver</button>
-          <div>
-            <h1 style={{ fontFamily:"'Lora',serif", fontSize:'22px', fontWeight:700 }}>{course?.name}</h1>
-            <p style={{ color:C.muted, fontSize:'12px' }}>{course?.subject} · {course?.grade}</p>
+        {/* ── BIENVENIDA ─────────────────────────────────────────────────────── */}
+        <div className="anim-fade-up" style={{ marginBottom:'28px' }}>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:'12px' }}>
+            <div>
+              <div style={{ fontSize:'13px', color:C.muted, marginBottom:'4px' }}>{greeting} 👋</div>
+              <h1 style={{ fontFamily:"'Lora',serif", fontSize:'28px', fontWeight:700, marginBottom:'4px' }}>
+                {profile?.name?.split(' ')[0] || 'Profesor'}
+              </h1>
+              <p style={{ color:C.muted, fontSize:'13px' }}>
+                {profile?.specialty || 'Docente'} · {new Date().toLocaleDateString('es-CL', { weekday:'long', day:'numeric', month:'long' })}
+              </p>
+            </div>
+            <Btn color={C.amber} onClick={() => navigate('/teacher/alerts')} icon={<Ico.Alert s={15}/>}>
+              Ver alertas activas
+            </Btn>
           </div>
-          {atRiskCount > 0 && <span style={{ background:C.redSoft,color:C.red,border:`1px solid ${C.red}40`,borderRadius:'20px',padding:'4px 12px',fontSize:'12px',fontWeight:700,marginLeft:'auto' }}>🔴 {atRiskCount} en riesgo</span>}
         </div>
 
-        <Tabs tabs={['Clases','Alumnos']} active={tab} onChange={setTab} />
+        {loadErr && <Alert type="error" style={{ marginBottom:'16px' }}>{loadErr}</Alert>}
 
-        {/* ── TAB CLASES ── */}
-        {tab === 'Clases' && (
-          <div className="anim-fade-up">
-            <Card style={{ marginBottom:'24px', padding:'22px' }}>
-              <SectionHeader title="📤 Publicar nueva clase" sub="El contenido se convierte en 5 estilos de aprendizaje con IA" />
+        {/* ── KPIs ─────────────────────────────────────────────────────────── */}
+        <div className="anim-fade-up anim-d1" style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))', gap:'12px', marginBottom:'32px' }}>
+          <StatCard label="Mis Materias"     value={courses.length}  icon={<Ico.Book  s={22} c={C.accent}/>} color={C.accent} />
+          <StatCard label="Clases publicadas" value={totalClasses}   icon={<Ico.Chart s={22} c={C.green}/>}  color={C.green}  />
+          <StatCard label="Total alumnos"     value={totalStudents}  icon={<Ico.Users s={22} c={C.violet}/>} color={C.violet} />
+        </div>
 
-              <div {...getRootProps()} style={{ border:`2px dashed ${isDragActive?C.accent:C.border}`, borderRadius:'12px', padding:'22px', textAlign:'center', cursor:'pointer', transition:'all .2s', background:isDragActive?`${C.accent}08`:'transparent', marginBottom:'14px' }}>
-                <input {...getInputProps()} />
-                {file ? (
-                  <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'10px' }}>
-                    <span style={{ fontSize:'22px' }}>{file.type==='application/pdf'?'📄':'🖼️'}</span>
-                    <span style={{ fontWeight:600, color:C.text }}>{file.name}</span>
-                    <button onClick={e=>{e.stopPropagation();setFile(null);}} style={{ background:'none',border:'none',color:C.muted,cursor:'pointer',fontSize:'18px' }}>×</button>
-                  </div>
-                ) : (
-                  <>
-                    <div style={{ fontSize:'28px', marginBottom:'8px' }}>📁</div>
-                    <div style={{ color:C.muted, fontSize:'13px' }}>{isDragActive?'Suelta el archivo aquí':'Arrastra un PDF o imagen de la pizarra'}</div>
-                  </>
-                )}
-              </div>
+        {/* ── MATERIAS ─────────────────────────────────────────────────────── */}
+        <SectionHeader
+          title="Mis Materias"
+          sub={courses.length > 0 ? 'Selecciona una materia para gestionar clases y alumnos' : ''}
+        />
 
-              <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'14px' }}>
-                <div style={{ flex:1,height:'1px',background:C.border }} />
-                <span style={{ color:C.muted,fontSize:'12px' }}>o escribe / pega el contenido</span>
-                <div style={{ flex:1,height:'1px',background:C.border }} />
-              </div>
+        {loading ? (
+          <div style={{ display:'flex', justifyContent:'center', padding:'70px' }}><Spinner size={36} /></div>
+        ) : courses.length === 0 ? (
+          <div>
+            <EmptyState emoji="📚" title="Sin materias asignadas" desc="El administrador debe asignarte materias para que puedas comenzar a publicar clases." />
+            {!profile?.id && (
+              <Alert type="warning" style={{ marginTop:'16px' }}>
+                Tu cuenta aún no está vinculada al sistema. Asegúrate de que el administrador haya creado tu perfil con el mismo correo que usas para iniciar sesión.
+              </Alert>
+            )}
+          </div>
+        ) : (
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:'16px' }}>
+            {courses.map((c, i) => {
+              const nClasses  = classCounts[c.id] || 0;
+              const nStudents = students[c.id]?.length || 0;
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => navigate(`/teacher/course/${c.id}`)}
+                  className={`anim-fade-up anim-d${Math.min(i+1,5)}`}
+                  style={{ all:'unset', cursor:'pointer', display:'block' }}
+                >
+                  <Card style={{ padding:0, overflow:'hidden', transition:'transform .18s, box-shadow .18s' }}
+                    onMouseEnter={e => { e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow=`0 8px 30px ${C.accent}22`; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=''; }}>
 
-              <Textarea
-                id="content"
-                placeholder="Pega o escribe el contenido de la clase aquí..."
-                value={text} onChange={e=>setText(e.target.value)}
-                style={{ minHeight:'110px', marginBottom:'14px' }}
-              />
+                    {/* Color top bar */}
+                    <div style={{ height:'5px', background:`linear-gradient(90deg, ${C.accent}, ${C.violet})` }} />
 
-              {error   && <div style={{ marginBottom:'12px' }}><Alert type="error">{error}</Alert></div>}
-              {success && <div style={{ marginBottom:'12px' }}><Alert type="success">{success}</Alert></div>}
-
-              {loading ? (
-                <div style={{ display:'flex', alignItems:'center', gap:'14px', padding:'14px', background:C.accentSoft, borderRadius:'12px' }}>
-                  <Spinner size={22} />
-                  <div>
-                    <div style={{ fontWeight:600, fontSize:'14px' }}>Gemini está generando los 5 estilos...</div>
-                    <div style={{ color:C.muted, fontSize:'12px', marginTop:'2px' }}>Esto tarda unos segundos</div>
-                  </div>
-                </div>
-              ) : (
-                <Btn full onClick={handlePublish} icon="✨">Publicar clase con IA</Btn>
-              )}
-            </Card>
-
-            <SectionHeader title="Clases publicadas" sub={`${classes.length} en este curso`} />
-            {classes.length === 0 ? (
-              <EmptyState emoji="📭" title="Sin clases aún" desc="Publica la primera clase arriba" />
-            ) : (
-              <div style={{ display:'grid', gap:'11px' }}>
-                {classes.map((cls, i) => (
-                  <Card key={cls.id} className={`anim-fade-up anim-d${Math.min(i+1,5)}`} style={{ padding:'16px 18px' }}>
-                    <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'12px' }}>
-                      <div style={{ flex:1 }}>
-                        <div style={{ fontWeight:700, fontSize:'15px', marginBottom:'5px' }}>
-                          {cls.content?.titulo || 'Clase sin título'}
+                    <div style={{ padding:'22px' }}>
+                      {/* Header */}
+                      <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:'18px' }}>
+                        <div style={{ width:48,height:48,borderRadius:'14px',background:`${C.accent}15`,border:`2px solid ${C.accent}25`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'24px' }}>
+                          📖
                         </div>
-                        <div style={{ color:C.muted, fontSize:'12px', marginBottom:'8px' }}>
-                          {cls.createdAt?.toDate?.().toLocaleDateString('es-CL', { day:'2-digit', month:'short', year:'numeric' }) || '—'}
+                        <Badge color={nClasses>0?C.green:C.muted}>{nClasses} clase{nClasses!==1?'s':''}</Badge>
+                      </div>
+
+                      {/* Info */}
+                      <div style={{ fontWeight:700, fontSize:'17px', marginBottom:'4px', color:C.text }}>{c.name}</div>
+                      <div style={{ color:C.muted, fontSize:'13px', marginBottom:'18px' }}>
+                        {c.subject || c.name} · {c.grade || 'Sin nivel'}
+                      </div>
+
+                      {/* Stats row */}
+                      <div style={{ display:'flex', gap:'12px', marginBottom:'18px' }}>
+                        <div style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', color:C.textSub }}>
+                          <Ico.Users s={13} c={C.textSub}/> {nStudents} alumno{nStudents!==1?'s':''}
                         </div>
-                        <div style={{ display:'flex', gap:'6px', flexWrap:'wrap' }}>
-                          {STYLES.map(s => <span key={s.id} style={{ background:s.soft,color:s.color,borderRadius:'20px',padding:'2px 9px',fontSize:'11px',fontWeight:600 }}>{s.emoji}</span>)}
+                        <div style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', color:C.textSub }}>
+                          <Ico.Clock s={13} c={C.textSub}/> {nClasses===0?'Sin clases aún':`${nClasses} publicada${nClasses!==1?'s':''}`}
                         </div>
                       </div>
-                      <button onClick={()=>deleteClass(cls.id)} style={{ background:'none',border:'none',color:C.muted,cursor:'pointer',fontSize:'16px',flexShrink:0 }} title="Eliminar">🗑️</button>
+
+                      {/* CTA */}
+                      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', paddingTop:'14px', borderTop:`1px solid ${C.border}` }}>
+                        <span style={{ fontSize:'13px', color:C.accent, fontWeight:600 }}>Gestionar materia</span>
+                        <Ico.Arrow s={16} c={C.accent}/>
+                      </div>
                     </div>
                   </Card>
-                ))}
-              </div>
-            )}
+                </button>
+              );
+            })}
           </div>
         )}
 
-        {/* ── TAB ALUMNOS ── */}
-        {tab === 'Alumnos' && (
-          <div className="anim-fade-up">
-            
-            {success && <div style={{ marginBottom:'16px' }}><Alert type="success">{success}</Alert></div>}
-            
-            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'18px', flexWrap:'wrap', gap:'10px' }}>
-              <div style={{ display:'flex', gap:'10px', flexWrap:'wrap' }}>
-                <span style={{ background:C.redSoft,color:C.red,borderRadius:'20px',padding:'5px 14px',fontSize:'12px',fontWeight:700 }}>🔴 En riesgo: {atRiskCount}</span>
-                <span style={{ background:C.amberSoft,color:C.amber,borderRadius:'20px',padding:'5px 14px',fontSize:'12px',fontWeight:700 }}>🟡 En observación: {watchingCount}</span>
-                <span style={{ background:C.greenSoft,color:C.green,borderRadius:'20px',padding:'5px 14px',fontSize:'12px',fontWeight:700 }}>🟢 Bien: {students.filter(s=>s.metrics?.riskScore>69).length}</span>
-              </div>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <Btn small outline onClick={exportStudentsToExcel}>📊 Exportar Excel</Btn>
-                <Btn small color={C.accent} onClick={() => setAssignModal(true)} icon="➕">Vincular Alumno</Btn>
-              </div>
+        {/* ── GUÍA RÁPIDA (si no hay clases) ──────────────────────────────── */}
+        {!loading && courses.length > 0 && totalClasses === 0 && (
+          <Card className="anim-fade-up" style={{ marginTop:'28px', background:`${C.accent}07`, borderColor:`${C.accent}25`, padding:'22px' }}>
+            <div style={{ fontWeight:700, fontSize:'15px', marginBottom:'14px', color:C.accent }}>
+              🚀 ¿Por dónde empezar?
             </div>
-
-            {students.length === 0 ? (
-              <EmptyState emoji="🎒" title="Sin alumnos" desc="No hay alumnos en este curso aún. Usa el botón de Vincular Alumno." />
-            ) : (
-              <div style={{ display:'grid', gap:'12px' }}>
-                {students.map((s, i) => {
-                  const m        = s.metrics || { riskScore: 100, totalSessions: 0, daysSinceLastActivity: 999 };
-                  const isMyInsight = aiInsight?.studentId === s.id;
-                  return (
-                    <Card key={s.id} className={`anim-fade-up anim-d${Math.min(i+1,5)}`}>
-                      <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:'12px', flexWrap:'wrap' }}>
-                        <div style={{ display:'flex', gap:'12px', flex:1 }}>
-                          <div style={{ width:42,height:42,borderRadius:'50%',background:`${C.accent}15`,border:`2px solid ${C.accent}30`,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,color:C.accent,flexShrink:0 }}>{s.name?.[0]?.toUpperCase()}</div>
-                          <div style={{ flex:1 }}>
-                            <div style={{ fontWeight:700, marginBottom:'4px' }}>{s.name}</div>
-                            <div style={{ display:'flex', gap:'12px', flexWrap:'wrap' }}>
-                              <span style={{ color:C.muted,fontSize:'12px' }}>📚 {m.totalSessions} sesiones</span>
-                              {m.avgQuizScore!=null && <span style={{ color:C.muted,fontSize:'12px' }}>🎯 {m.avgQuizScore}%</span>}
-                              <span style={{ color:m.daysSinceLastActivity>7?C.red:C.muted,fontSize:'12px' }}>
-                                📅 {m.daysSinceLastActivity===999?'Nunca conectado':`hace ${m.daysSinceLastActivity}d`}
-                              </span>
-                              {m.trend==='declining' && <span style={{ color:C.red,fontSize:'12px',fontWeight:600 }}>↓ Bajando</span>}
-                              {m.trend==='improving' && <span style={{ color:C.green,fontSize:'12px',fontWeight:600 }}>↑ Mejorando</span>}
-                            </div>
-                            {m.riskReasons?.length > 0 && (
-                              <div style={{ display:'flex', gap:'5px', flexWrap:'wrap', marginTop:'6px' }}>
-                                {m.riskReasons.map((r,j) => <span key={j} style={{ background:C.surface,color:C.muted,borderRadius:'20px',padding:'2px 8px',fontSize:'11px' }}>{r}</span>)}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'8px', flexShrink:0 }}>
-                          <RiskBadge score={m.riskScore} size="lg" />
-                          <Btn small outline color={C.violet} loading={analyzing===s.id} onClick={()=>handleAnalyzeStudent(s)} icon="🤖">Análisis IA</Btn>
-                        </div>
-                      </div>
-
-                      {isMyInsight && aiInsight.data && (
-                        <div style={{ marginTop:'16px', padding:'16px', background:`${C.violet}08`, border:`1px solid ${C.violet}25`, borderRadius:'12px' }}>
-                          <div style={{ fontWeight:700, color:C.violet, marginBottom:'10px' }}>🤖 Análisis de Gemini</div>
-                          <p style={{ color:C.text, fontSize:'13px', lineHeight:1.65, marginBottom:'12px' }}>{aiInsight.data.resumen}</p>
-                          <div style={{ marginBottom:'10px' }}>
-                            <div style={{ fontWeight:600, fontSize:'12px', color:C.textSub, marginBottom:'5px', textTransform:'uppercase', letterSpacing:'.05em' }}>Factores de riesgo</div>
-                            {aiInsight.data.factores?.map((f,j) => <div key={j} style={{ color:C.red,fontSize:'12px',marginBottom:'3px' }}>• {f}</div>)}
-                          </div>
-                          <div style={{ marginBottom:'10px' }}>
-                            <div style={{ fontWeight:600, fontSize:'12px', color:C.textSub, marginBottom:'5px', textTransform:'uppercase', letterSpacing:'.05em' }}>Recomendaciones para ti</div>
-                            {aiInsight.data.recomendaciones?.map((r,j) => <div key={j} style={{ color:C.green,fontSize:'12px',marginBottom:'3px' }}>✓ {r}</div>)}
-                          </div>
-                          {aiInsight.data.mensajeAlumno && (
-                            <div style={{ background:C.accentSoft, borderRadius:'8px', padding:'10px 13px', marginTop:'8px' }}>
-                              <div style={{ fontWeight:600, fontSize:'11px', color:C.accent, marginBottom:'4px', textTransform:'uppercase' }}>Mensaje sugerido para el alumno</div>
-                              <p style={{ color:C.text, fontSize:'13px', fontStyle:'italic' }}>"{aiInsight.data.mensajeAlumno}"</p>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </Card>
-                  );
-                })}
+            {[
+              { n:'1', text:'Selecciona una materia arriba', done: courses.length>0 },
+              { n:'2', text:'Publica tu primera clase con IA (PDF o texto)', done: totalClasses>0 },
+              { n:'3', text:'Los alumnos recibirán el contenido en 5 estilos de aprendizaje', done: false },
+            ].map(step => (
+              <div key={step.n} style={{ display:'flex', alignItems:'center', gap:'12px', padding:'10px 0', borderBottom:`1px solid ${C.border}` }}>
+                <div style={{ width:28,height:28,borderRadius:'50%',background:step.done?C.green:`${C.accent}20`,color:step.done?'#fff':C.accent,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'13px',flexShrink:0 }}>
+                  {step.done ? '✓' : step.n}
+                </div>
+                <div style={{ fontSize:'13px', color:step.done?C.muted:C.text, textDecoration:step.done?'line-through':'none' }}>{step.text}</div>
               </div>
-            )}
-          </div>
+            ))}
+          </Card>
         )}
 
       </main>
-
-      {/* ── MODAL: VINCULAR NUEVO ALUMNO ── */}
-      <Modal open={assignModal} onClose={() => { setAssignModal(false); setError(''); }} title="Inscribir Alumno a esta Materia">
-        <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
-          
-          <div style={{ background:`${C.accent}15`, border:`1px solid ${C.accent}30`, padding:'14px', borderRadius:'10px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: 40, height: 40, borderRadius: '50%', background: C.accent, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Ico.Student s={22} />
-            </div>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: '15px', color: C.text }}>Matrícula Directa</div>
-              <div style={{ fontSize: '12px', color: C.muted, marginTop: '2px' }}>Selecciona un estudiante del directorio del colegio.</div>
-            </div>
-          </div>
-
-          <Select
-            label="Estudiante a vincular"
-            value={selectedStudentId}
-            onChange={(e) => setSelectedStudentId(e.target.value)}
-            options={[
-              { value: '', label: 'Selecciona un alumno de la lista...' },
-              // Filtramos a los alumnos que YA están en este curso para no mostrarlos
-              ...allSchoolStudents
-                .filter(s => !(s.enrolledCourses || []).includes(courseId))
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map(s => ({ value: s.id, label: `${s.name} (RUT: ${s.rut})` }))
-            ]}
-          />
-
-          {error && <Alert type="error">{error}</Alert>}
-
-          <Btn full color={C.accent} onClick={handleAssignStudent} loading={assigning} disabled={!selectedStudentId}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Ico.Plus s={16}/> Confirmar y Vincular</div>
-          </Btn>
-        </div>
-      </Modal>
-
     </div>
   );
 }
