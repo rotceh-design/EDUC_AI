@@ -1,6 +1,6 @@
 # 🎓 educ_AI
 
-Plataforma educativa SaaS con IA — React 18 + Vite + Firebase + Gemini 2.5 Pro Preview
+Plataforma educativa SaaS con IA — React 18 + Vite + Firebase + Rotceh-design
 
 ---
 
