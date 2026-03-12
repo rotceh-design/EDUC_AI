@@ -5,17 +5,23 @@ const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flas
 
 // ── El "Cerebro" Pedagógico de la IA ──────────────────────────────────────────
 const SYSTEM = `Eres un experto neuroeducador, pedagogo de alto nivel y diseñador instruccional. 
-Tu misión es transformar el contenido bruto de una clase en una experiencia de aprendizaje inmersiva, completa, extensa y altamente didáctica, dividida en 6 estilos de aprendizaje.
+Tu misión es transformar el contenido bruto de una clase en una experiencia inmersiva, abundante y altamente didáctica, dividida en 6 mundos de aprendizaje.
 
-REGLA DE ORO: NIVELACIÓN ACADÉMICA ESTRICTA.
-Debes adaptar ABSOLUTAMENTE TODO (vocabulario, profundidad técnica, analogías, complejidad de los ejercicios, longitud de los textos y tono) al nivel educativo especificado por el usuario.
-- Si es Educación Básica/Primaria: Usa textos más cortos, lenguaje cercano, analogías cotidianas muy simples (juguetes, animales), explicaciones paso a paso, tono muy motivador y lúdico. Usa muchos EMOJIS.
-- Si es Educación Media/Secundaria: Textos EXTENSOS. Fomenta el pensamiento crítico, usa lenguaje técnico adecuado, conecta con la realidad juvenil, problemas de análisis.
-- Si es Educación Superior/Universitaria: Rigurosidad académica absoluta, textos MUY EXTENSOS, vocabulario experto, análisis complejo, casos de estudio profesionales y citas implícitas.
+REGLA DE ORO 1: NIVELACIÓN ACADÉMICA ESTRICTA.
+Debes adaptar ABSOLUTAMENTE TODO (vocabulario, profundidad técnica, analogías, complejidad, longitud y tono) al nivel educativo especificado.
+- Si es Educación Básica/Primaria: Textos cortos, analogías lúdicas, explicaciones muy paso a paso, tono motivador. Emojis abundantes.
+- Si es Educación Media/Secundaria: Pensamiento crítico, ejemplos reales/tecnológicos, lenguaje técnico juvenil.
+- Si es Universitario: Rigurosidad académica, análisis complejo, casos de estudio profesionales.
 
-REGLAS DE FORMATO:
-- Basa todo en el contenido proporcionado. Si es muy breve, expándelo didácticamente con conocimientos universales válidos para esa materia y nivel.
-- Responde ÚNICAMENTE con JSON válido, sin markdown (\`\`\`) ni texto extra fuera del JSON.`;
+REGLA DE ORO 2: AUTONOMÍA MÓDULAR (SÚPER IMPORTANTE).
+Cada uno de los 6 estilos de aprendizaje es un "Mundo de Enseñanza" individual y completo. 
+¡CADA SECCIÓN DEBE EXPLICAR EL TEMA ENTERO DESDE CERO! 
+- Si un alumno SOLO lee la lectura, aprende todo el tema.
+- Si un alumno SOLO escucha el podcast, aprende todo el tema a través de la narración.
+- Si un alumno SOLO juega a las tarjetas, debe poder deducir la materia completa.
+- No asumas que el alumno leyó un módulo anterior. Haz que cada módulo sea abundante, rico en detalles y 100% autosuficiente usando su propia metodología.
+
+Responde ÚNICAMENTE con JSON válido, sin markdown (\`\`\`) ni texto extra.`;
 
 // ── Genera los estilos de aprendizaje ──────────────────────────────────────
 export async function generateLearningStyles(rawContent, subject, grade) {
@@ -25,7 +31,7 @@ export async function generateLearningStyles(rawContent, subject, grade) {
   const isSchoolLevel = /b[aá]sico|b[aá]sica|medio|media/i.test(gradeStr);
   const finalGrade = isSchoolLevel 
     ? gradeStr 
-    : `${gradeStr} (Nivel Universitario / Educación Superior - Usa lenguaje técnico, riguroso y MUY extenso)`;
+    : `${gradeStr} (Nivel Universitario / Educación Superior - Usa lenguaje técnico, riguroso y extenso)`;
 
   const prompt = `${SYSTEM}
 
@@ -37,75 +43,75 @@ CONTENIDO BRUTO DE LA CLASE:
 ${rawContent}
 ---
 
-Genera el material instruccional devolviendo ESTRICTAMENTE este formato JSON (asegúrate de que la complejidad se adapte a ${finalGrade}):
+Genera el material instruccional devolviendo ESTRICTAMENTE este formato JSON (asegúrate de que cada sección sea MUY ABUNDANTE e INDEPENDIENTE):
 {
   "titulo": "Título atractivo y claro del tema (máx 80 chars)",
-  "resumenBreve": "Un párrafo introductorio motivador que enganche al estudiante considerando su edad.",
-  "imagenSugerida": "Escribe un prompt EN INGLÉS para generar una ilustración sobre este tema usando una IA generadora de imágenes. (Ej: 'Cute cartoon style illustration of the solar system for kids' o 'Realistic 3D render of human heart anatomy')",
+  "resumenBreve": "Un párrafo introductorio que contextualice todo el tema y enganche al estudiante.",
+  "imagenSugerida": "Escribe un prompt EN INGLÉS para generar una ilustración espectacular sobre este tema. (Ej: 'Cinematic 3D render of the solar system, glowing planets' o 'Cute cartoon illustration of photosynthesis')",
   "lector": {
-    "introduccion": "Una introducción extensa que contextualice el tema histórica o conceptualmente.",
-    "desarrollo": "El cuerpo principal de la clase. Ajusta la longitud y profundidad estrictamente al nivel del alumno.",
-    "conclusion": "Un párrafo robusto que sintetice los aprendizajes.",
+    "introduccion": "Mundo Lector: Introducción profunda que enseñe las bases del tema desde cero.",
+    "desarrollo": "Desarrollo completo y extenso de toda la materia. Explica el 'por qué' y el 'cómo' con total abundancia de detalles.",
+    "conclusion": "Párrafo robusto que sintetice los aprendizajes.",
     "conceptosClave": [
-      {"termino":"Término 1","definicion":"Definición completa y técnica acorde al nivel..."},
-      {"termino":"Término 2","definicion":"Definición completa y técnica acorde al nivel..."}
+      {"termino":"Término 1","definicion":"Definición completa..."},
+      {"termino":"Término 2","definicion":"Definición completa..."}
     ],
-    "paraSaber": "Un dato curioso o un estudio de caso real que sorprenda al estudiante."
+    "paraSaber": "Un dato curioso o estudio de caso profundo."
   },
   "visual": {
     "mapaConceptual": {
       "raiz": "CONCEPTO CENTRAL",
       "ramas": [
-        {"titulo":"Subtema 1","color":"#4f8ef7","nodos":["Punto A","Punto B","Punto C"]},
-        {"titulo":"Subtema 2","color":"#34d399","nodos":["Punto A","Punto B","Punto C"]}
+        {"titulo":"Subtema Principal 1","color":"#4f8ef7","nodos":["Dato clave completo A","Dato clave B","Dato clave C"]},
+        {"titulo":"Subtema Principal 2","color":"#34d399","nodos":["Dato clave completo A","Dato clave B","Dato clave C"]}
       ]
     },
     "tablaComparativa": {
-      "titulo":"Tabla de Análisis y Clasificación",
-      "columnas":["Concepto", "Características", "Ejemplo Práctico"],
+      "titulo":"Matriz de Conocimiento (Debe abarcar todo el tema)",
+      "columnas":["Concepto", "Explicación Detallada", "Ejemplo/Aplicación"],
       "filas":[
-        {"celdas": ["Concepto A", "Descripción detallada", "Ejemplo claro A"]},
-        {"celdas": ["Concepto B", "Descripción detallada", "Ejemplo claro B"]}
+        {"celdas": ["Concepto A", "Explicación que permite entender la materia sin leer el texto", "Ejemplo claro"]},
+        {"celdas": ["Concepto B", "Explicación completa", "Ejemplo claro"]}
       ]
     },
-    "pasosProceso": ["Paso 1: Descripción de fase...", "Paso 2: Descripción de fase..."]
+    "pasosProceso": ["Paso 1: Explicación detallada...", "Paso 2: Explicación detallada..."]
   },
   "auditivo": {
-    "narracion": "Escribe un GUION DE PODCAST EDUCATIVO. Si es Básica, que suene como un cuentacuentos. Si es Media, como un youtuber dinámico. Si es Universitario, como una Charla TED. Usa storytelling y preguntas retóricas."
-  },
-  "quiz": {
-    "instrucciones": "Mensaje de ánimo adaptado a la edad.",
-    "preguntas": [
-      {"id":1,"pregunta":"Pregunta conceptual...","opciones":["Opción A","Opción B (Correcta)","Opción C","Opción D"],"correcta":1,"explicacion":"Explicación detallada..."},
-      {"id":2,"pregunta":"Pregunta de análisis...","opciones":["Opción A","Opción B","Opción C (Correcta)","Opción D"],"correcta":2,"explicacion":"Explicación detallada..."}
-    ]
+    "narracion": "Mundo Auditivo: Escribe un GUION DE PODCAST EXTENSO Y COMPLETO. Debe explicar TODA LA CLASE desde cero conversando con el alumno. Usa metáforas, haz preguntas al oyente y responde las dudas comunes. Si el alumno solo escucha esto, debe sacar un 100% en la prueba."
   },
   "practica": {
-    "introduccion": "Planteamiento de un problema real donde el alumno deba aplicar lo aprendido hoy.",
+    "introduccion": "Mundo Práctico: Plantea una situación del mundo real. Explica brevemente la teoría necesaria para resolverla aquí mismo.",
     "ejercicios": [
       {
         "numero":1,
-        "titulo":"Análisis de Caso / Problema Inicial",
+        "titulo":"Misión Aplicada",
         "tipo":"aplicacion",
-        "enunciado":"Un enunciado que plantee un problema realista adecuado al nivel del curso...",
-        "datos":["Dato clave 1", "Dato clave 2"],
-        "pasos":["Paso 1 lógico...", "Paso 2 analítico..."],
-        "respuesta":"La solución explicada de forma didáctica.",
-        "pista":"Pista inteligente que guíe el pensamiento."
+        "enunciado":"Plantea un problema abundante en contexto y datos...",
+        "datos":["Dato esencial 1", "Dato esencial 2"],
+        "pasos":["Paso 1 guiado...", "Paso 2 explicativo..."],
+        "respuesta":"La solución detallada enseñando el por qué.",
+        "pista":"Un recordatorio teórico que ayude a resolverlo sin mirar otras pestañas."
       }
     ]
   },
+  "quiz": {
+    "instrucciones": "Mensaje de desafío final.",
+    "preguntas": [
+      {"id":1,"pregunta":"Pregunta conceptual profunda...","opciones":["A","B (Correcta)","C","D"],"correcta":1,"explicacion":"Explicación magistral que sirve como repaso de la materia."},
+      {"id":2,"pregunta":"Pregunta analítica...","opciones":["A","B","C (Correcta)","D"],"correcta":2,"explicacion":"Explicación formativa completa."}
+    ]
+  },
   "memoria": {
-    "instrucciones": "Indicaciones lúdicas para jugar y memorizar los conceptos más importantes.",
+    "instrucciones": "Mundo Gamificado: Aprende y memoriza TODA la teoría a través de estas tarjetas y desafíos.",
     "tarjetasFlash": [
-      {"anverso": "Concepto clave o Pregunta corta 1", "reverso": "Respuesta exacta y fácil de recordar"},
-      {"anverso": "Concepto clave o Pregunta corta 2", "reverso": "Respuesta exacta y fácil de recordar"},
-      {"anverso": "Concepto clave o Pregunta corta 3", "reverso": "Respuesta exacta y fácil de recordar"},
-      {"anverso": "Concepto clave o Pregunta corta 4", "reverso": "Respuesta exacta y fácil de recordar"}
+      {"anverso": "Pregunta clave 1 sobre el tema", "reverso": "Respuesta explicativa completa (no solo una palabra)"},
+      {"anverso": "Pregunta clave 2", "reverso": "Respuesta explicativa"},
+      {"anverso": "Pregunta clave 3", "reverso": "Respuesta explicativa"},
+      {"anverso": "Pregunta clave 4", "reverso": "Respuesta explicativa"}
     ],
     "completarOraciones": [
-      {"oracion": "La capital de Chile es ___.", "respuesta": "Santiago"},
-      {"oracion": "La molécula de agua está formada por dos átomos de hidrógeno y uno de ___.", "respuesta": "oxígeno"}
+      {"oracion": "Una parte vital de este proceso es la ___, la cual permite que...", "respuesta": "palabra_clave"},
+      {"oracion": "El científico descubrió que el ___ es el responsable de...", "respuesta": "concepto_clave"}
     ]
   }
 }`;
@@ -117,7 +123,7 @@ Genera el material instruccional devolviendo ESTRICTAMENTE este formato JSON (as
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
       generationConfig: {
         responseMimeType: 'application/json',
-        temperature: 0.5, 
+        temperature: 0.6, // Subimos un poco para generar más abundancia y creatividad en los mundos
         maxOutputTokens: 8192,
       },
     }),
