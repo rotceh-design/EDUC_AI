@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import { useAuth } from '@/contexts/AuthContext';
-import { C, STYLES } from '@/theme';
+import { C, STYLES, Icons } from '@/theme';
 import { Btn, Textarea, Alert, Spinner, Card, Badge, SectionHeader, EmptyState, Tabs, Modal, Select } from '@/components/ui';
 import Navbar from '@/components/Navbar';
 import RiskBadge from '@/components/RiskBadge';
@@ -19,6 +19,8 @@ const Ico = {
   Upload: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>,
   Magic: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m13 2-2 2.5h3L12 7h3l-4 5h3l-2 3h2l-3 7"/><path d="M5 3 4 4"/><path d="M19 3l1 1"/><path d="M2 11h2"/><path d="M20 11h2"/><path d="m5 19-1 1"/><path d="m19 19 1 1"/></svg>,
   Book: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
+  Eye: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>,
+  Trash: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>,
 };
 
 export default function TeacherCourse() {
@@ -47,6 +49,9 @@ export default function TeacherCourse() {
   const [assignModal, setAssignModal] = useState(false);
   const [selectedStudentId, setSelectedStudentId] = useState('');
   const [assigning, setAssigning] = useState(false);
+
+  // 🚀 NUEVO: Estado para previsualizar la clase
+  const [previewClass, setPreviewClass] = useState(null);
 
   const loadData = async () => {
     if (!courseId || !schoolId || !user?.uid) return;
@@ -92,7 +97,6 @@ export default function TeacherCourse() {
     if (loading) return;
     setError(''); setSuccess('');
 
-    // 🛡️ BLINDAJE 1: Verifica que el curso exista en memoria
     if (!course) {
       setError('Aún estamos cargando los datos del curso. Espera un segundo y vuelve a intentar.');
       return;
@@ -122,7 +126,6 @@ export default function TeacherCourse() {
 
     setLoading(true);
     try {
-      // 🛡️ BLINDAJE 2 EXTREMO: Uso de Optional Chaining (?.)
       const safeSubject = course?.subject || course?.name || 'Materia General';
       const safeGrade = course?.grade || 'Nivel Básico';
 
@@ -139,7 +142,7 @@ export default function TeacherCourse() {
       });
 
       setText(''); setFile(null);
-      setSuccess('✨ ¡Increíble! Gemini ha transformado tu material en 5 estilos de aprendizaje.');
+      setSuccess('✨ ¡Increíble! Gemini ha transformado tu material en 6 estilos de aprendizaje, incluyendo juegos de memoria.');
       setTimeout(() => setSuccess(''), 6000);
     } catch(e) { 
       console.error("Error IA:", e);
@@ -179,7 +182,6 @@ export default function TeacherCourse() {
       <Navbar />
       <main style={{ maxWidth:'1000px', margin:'0 auto', padding:'30px 20px' }}>
 
-        {/* 🚀 SELECTOR RÁPIDO DE MATERIAS Y BOTÓN VOLVER */}
         <div className="anim-fade-up" style={{ display:'flex', alignItems:'center', gap:'20px', marginBottom:'30px', background:C.card, padding:'16px 20px', borderRadius:'16px', border:`1px solid ${C.border}` }}>
           <div style={{ width:48, height:48, borderRadius:'12px', background:C.accent, color:'#fff', display:'flex', alignItems:'center', justifyContent:'center' }}>
             <Ico.Book s={24}/>
@@ -192,14 +194,13 @@ export default function TeacherCourse() {
               style={{ background:'transparent', border:'none', fontSize:'22px', fontWeight:700, color:C.text, outline:'none', cursor:'pointer', width:'100%', fontFamily:"'Lora',serif" }}
             >
               {myCourses.map(c => (
-                <option key={c.id} value={c.id} style={{ fontSize:'16px', fontFamily:"'Sora', sans-serif" }}>
+                <option key={c.id} value={c.id} style={{ fontSize:'16px', background: C.surface }}>
                   {c.name} — {c.grade || 'General'}
                 </option>
               ))}
             </select>
           </div>
           
-          {/* BOTÓN VOLVER AL DASHBOARD DOCENTE */}
           <button 
             onClick={() => navigate('/teacher')} 
             style={{ display:'flex', alignItems:'center', gap:'6px', background:`${C.accent}15`, border:`1px solid ${C.accent}30`, borderRadius:'8px', padding:'10px 14px', cursor:'pointer', color:C.accent, fontSize:'13px', fontWeight:600, transition:'0.2s' }}
@@ -218,10 +219,9 @@ export default function TeacherCourse() {
             <Card style={{ marginBottom:'28px', padding:'24px', border:`1.5px solid ${C.border}` }}>
               <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'18px' }}>
                 <div style={{ padding:'10px', background:`${C.accent}15`, borderRadius:'10px', color:C.accent }}><Ico.Magic s={24}/></div>
-                <SectionHeader title="Laboratorio de Contenido IA" sub="Sube un archivo o escribe el tema para que Gemini genere la clase." />
+                <SectionHeader title="Laboratorio de Contenido IA" sub="Sube un archivo o escribe el tema para que Gemini genere la clase en 6 formatos interactivos." />
               </div>
 
-              {/* DROPZONE PROFESIONAL */}
               <div {...getRootProps()} style={{ 
                 border:`2px dashed ${isDragActive ? C.accent : C.border}`, 
                 borderRadius:'16px', padding:'30px', textAlign:'center', cursor:'pointer', 
@@ -283,16 +283,36 @@ export default function TeacherCourse() {
             <div style={{ display:'grid', gap:'12px' }}>
               {classes.length === 0 ? <EmptyState emoji="📭" title="Curso sin contenido" desc="Sube tu primer archivo arriba para comenzar." /> :
                 classes.map((cls, i) => (
-                  <Card key={cls.id} className={`anim-fade-up anim-d${Math.min(i+1,5)}`} style={{ padding:'18px 22px' }}>
+                  <Card 
+                    key={cls.id} 
+                    className={`anim-fade-up anim-d${Math.min(i+1,5)}`} 
+                    style={{ padding:'18px 22px', cursor:'pointer', transition:'.2s' }}
+                    onClick={() => setPreviewClass(cls)}
+                    onMouseEnter={e => e.currentTarget.style.borderColor = C.accent}
+                    onMouseLeave={e => e.currentTarget.style.borderColor = 'transparent'}
+                  >
                     <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                       <div style={{ flex:1 }}>
-                        <div style={{ fontWeight:700, fontSize:'16px', color:C.text }}>{cls.content?.titulo || 'Lección sin título'}</div>
+                        <div style={{ fontWeight:700, fontSize:'16px', color:C.text, display:'flex', alignItems:'center', gap:'8px' }}>
+                          {cls.content?.titulo || 'Lección sin título'}
+                        </div>
                         <div style={{ color:C.muted, fontSize:'12px', marginTop:'4px' }}>Publicado el {cls.createdAt?.toDate?.().toLocaleDateString('es-CL')}</div>
-                        <div style={{ display:'flex', gap:'6px', marginTop:'12px' }}>
-                          {STYLES.map(s => <span key={s.id} title={s.label} style={{ background:s.soft, color:s.color, borderRadius:'6px', padding:'4px 8px', fontSize:'12px' }}>{s.emoji}</span>)}
+                        
+                        <div style={{ display:'flex', gap:'8px', marginTop:'12px', flexWrap:'wrap' }}>
+                          {STYLES.map(s => {
+                            if (!cls.content?.[s.id]) return null;
+                            return (
+                              <span key={s.id} title={s.label} style={{ display:'flex', alignItems:'center', gap:'4px', background:s.soft, color:s.color, borderRadius:'6px', padding:'4px 8px', fontSize:'12px', fontWeight:600 }}>
+                                {s.icon} {s.label}
+                              </span>
+                            )
+                          })}
                         </div>
                       </div>
-                      <button onClick={()=>deleteClass(cls.id)} style={{ background:C.surface, border:'none', color:C.muted, cursor:'pointer', padding:'10px', borderRadius:'10px' }}>🗑️</button>
+                      <div style={{ display:'flex', gap:'8px' }}>
+                        <button onClick={(e)=>{ e.stopPropagation(); setPreviewClass(cls); }} style={{ background:`${C.accent}15`, border:'none', color:C.accent, cursor:'pointer', padding:'10px', borderRadius:'10px' }} title="Previsualizar"><Ico.Eye s={16}/></button>
+                        <button onClick={(e)=>{ e.stopPropagation(); if(window.confirm('¿Eliminar clase?')) deleteClass(cls.id); }} style={{ background:`${C.red}15`, border:'none', color:C.red, cursor:'pointer', padding:'10px', borderRadius:'10px' }} title="Eliminar"><Ico.Trash s={16}/></button>
+                      </div>
                     </div>
                   </Card>
                 ))
@@ -347,6 +367,8 @@ export default function TeacherCourse() {
 
       </main>
 
+      {/* ── MODALES ───────────────────────────────────────────────────────────── */}
+      
       {/* MODAL: VINCULAR ALUMNO */}
       <Modal open={assignModal} onClose={() => setAssignModal(false)} title="Añadir Alumno al Curso">
         <div style={{ display:'flex', flexDirection:'column', gap:'18px' }}>
@@ -363,6 +385,49 @@ export default function TeacherCourse() {
           />
           <Btn full color={C.accent} onClick={handleAssignStudent} loading={assigning} disabled={!selectedStudentId}>Confirmar Matrícula</Btn>
         </div>
+      </Modal>
+
+      {/* MODAL: PREVISUALIZACIÓN DE LA CLASE CREADA */}
+      <Modal open={!!previewClass} onClose={() => setPreviewClass(null)} title="Previsualización de la Clase">
+        {previewClass && (
+          <div style={{ display:'flex', flexDirection:'column', gap:'20px', maxHeight:'70vh', overflowY:'auto', paddingRight:'5px' }}>
+            
+            <div style={{ background:C.surface, padding:'20px', borderRadius:'12px', border:`1px solid ${C.border}` }}>
+              <h2 style={{ fontWeight:700, fontSize:'20px', color:C.text, marginBottom:'10px' }}>{previewClass.content?.titulo}</h2>
+              <p style={{ color:C.textSub, fontSize:'14px', lineHeight:'1.6' }}>{previewClass.content?.resumenBreve}</p>
+            </div>
+
+            {previewClass.content?.imagenSugerida && (
+              <div style={{ background:`${C.accent}08`, padding:'15px', borderRadius:'12px', border:`1px solid ${C.accent}20` }}>
+                <div style={{ fontSize:'11px', color:C.accent, textTransform:'uppercase', fontWeight:700, marginBottom:'6px' }}>Prompt de Imagen Generado</div>
+                <div style={{ fontSize:'13px', color:C.text, fontStyle:'italic' }}>"{previewClass.content.imagenSugerida}"</div>
+              </div>
+            )}
+
+            <div style={{ borderTop:`1px solid ${C.border}`, paddingTop:'15px' }}>
+              <div style={{ fontSize:'13px', fontWeight:600, color:C.muted, textTransform:'uppercase', marginBottom:'12px' }}>Módulos de Aprendizaje Creados:</div>
+              <div style={{ display:'flex', flexDirection:'column', gap:'10px' }}>
+                {STYLES.map(s => {
+                  const hasContent = !!previewClass.content?.[s.id];
+                  if (!hasContent) return null;
+                  return (
+                    <div key={s.id} style={{ display:'flex', alignItems:'center', gap:'12px', background:C.card, padding:'12px 16px', borderRadius:'8px', border:`1px solid ${C.border}` }}>
+                      <div style={{ width:32, height:32, borderRadius:'8px', background:s.soft, color:s.color, display:'flex', alignItems:'center', justifyContent:'center' }}>{s.icon}</div>
+                      <div>
+                        <div style={{ fontWeight:700, fontSize:'14px', color:C.text }}>{s.label}</div>
+                        <div style={{ color:C.textSub, fontSize:'12px' }}>{s.desc}</div>
+                      </div>
+                      <div style={{ marginLeft:'auto' }}>
+                        <Badge color={C.green}>Generado ✓</Badge>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+          </div>
+        )}
       </Modal>
 
     </div>

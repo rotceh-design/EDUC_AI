@@ -21,12 +21,10 @@ const Ico = {
   Trash: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>,
   Check: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
   Plus: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
-  Settings: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 9 4.68V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06A1.65 1.65 0 0 0 19.4 9H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
-  Robot: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>,
-  Edit: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
+  Settings: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06A1.65 1.65 0 0 0 19.4 9H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
+  Activity: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
   Mail: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>,
-  Phone: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
-  Activity: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+  Phone: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
 };
 
 const initialUserState = { role: 'student', rut: '', name: '', email: '', phone: '', guardian: '', specialty: '', classGroupId: '' };
@@ -42,7 +40,6 @@ const getRealOnlineStatus = (lastActiveTimestamp) => {
   return { color: C.textSub, text: `Hace ${Math.floor(diffMins/1440)} días`, dot: '#94a3b8' };
 };
 
-// Función para calcular "hace cuánto tiempo"
 const timeAgo = (dateStr) => {
   if (!dateStr) return 'Recientemente';
   const diff = Math.floor((new Date() - new Date(dateStr)) / 60000);
@@ -72,17 +69,16 @@ export default function AdminDashboard() {
   const [viewTeacher, setViewTeacher]         = useState(null); 
   const [editMateria, setEditMateria]         = useState(null); 
 
-  // IA
-  const [loadingMetrics, setLoadingMetrics] = useState(false);
-  const [generatingAI, setGeneratingAI] = useState(false);
-  const [aiInsight, setAiInsight]       = useState(null);
+  // IA y Analytics
+  const [analyzingStats, setAnalyzingStats] = useState(false);
+  const [teacherStats, setTeacherStats]     = useState(null);
+  const [studentStats, setStudentStats]     = useState(null);
 
   // Forms
   const [newUser, setNewUser]             = useState(initialUserState);
   const [newClassGroup, setNewClassGroup] = useState(initialClassGroupState);
   const [newMateria, setNewMateria]       = useState(initialMateriaState);
   
-  // Selectores para vinculaciones
   const [selectedAulaId, setSelectedAulaId] = useState('');
   const [assignMateriaToTeacherId, setAssignMateriaToTeacherId] = useState('');
   const [assignCourseIdToStudent, setAssignCourseIdToStudent] = useState('');
@@ -119,6 +115,37 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => { if (actualSchoolId) load(); }, [actualSchoolId]);
+
+  // ── ANALÍTICA PROFUNDA EN MODALES ──
+  const handleOpenTeacherModal = async (teacher) => {
+    setViewTeacher(teacher);
+    setAnalyzingStats(true);
+    try {
+      // 1. Cursos que imparte
+      const tCourses = courses.filter(c => c.teacherId === teacher.id).map(c => c.id);
+      // 2. Alumnos matriculados en sus cursos
+      const tStudents = students.filter(s => s.enrolledCourses?.some(cId => tCourses.includes(cId)));
+      // 3. Clases publicadas por él
+      const classesSnap = await getDocs(query(collection(db, 'classes'), where('teacherId', '==', teacher.id)));
+      
+      setTeacherStats({
+        totalCourses: tCourses.length,
+        totalStudents: tStudents.length,
+        totalClassesUploaded: classesSnap.size
+      });
+    } catch (e) { console.error(e); }
+    setAnalyzingStats(false);
+  };
+
+  const handleOpenStudentModal = async (student) => {
+    setAssignModal(student);
+    setAnalyzingStats(true);
+    try {
+      const metrics = await getStudentMetrics(student.uid || student.id, actualSchoolId);
+      setStudentStats(metrics);
+    } catch (e) { console.error(e); }
+    setAnalyzingStats(false);
+  };
 
   // ── ACCIONES PRINCIPALES ──
   const handleCreateClassGroup = async () => {
@@ -179,7 +206,7 @@ export default function AdminDashboard() {
         classGroupId: newUser.role === 'student' ? newUser.classGroupId : null,
         guardian: newUser.role === 'student' ? newUser.guardian : null,
         specialty: newUser.role === 'teacher' ? newUser.specialty : null,
-        enrolledCourses: enrolled, schoolId: actualSchoolId, uid: null, createdAt: serverTimestamp()
+        enrolledCourses: enrolled, schoolId: actualSchoolId, uid: null, xp: 0, createdAt: serverTimestamp()
       });
       setUserModal(false); setNewUser(initialUserState);
       setSuccess(`✓ Perfil registrado.`); load(); setTimeout(()=>setSuccess(''), 3000);
@@ -187,7 +214,6 @@ export default function AdminDashboard() {
     setSaving(false);
   };
 
-  // ── GESTIÓN AVANZADA DE ALUMNOS ──
   const handleChangeStudentAula = async () => {
     if (!selectedAulaId || !assignModal) return;
     setSaving(true); setModalErr('');
@@ -224,13 +250,14 @@ export default function AdminDashboard() {
     } catch (e) { console.error(e); }
   };
 
-  // ── GESTIÓN AVANZADA DE PROFESORES ──
   const handleAssignMateriaToTeacher = async () => {
     if (!assignMateriaToTeacherId || !viewTeacher) return;
     setSaving(true);
     try {
       await updateDoc(doc(db, 'courses', assignMateriaToTeacherId), { teacherId: viewTeacher.id });
-      setAssignMateriaToTeacherId(''); setSuccess('✓ Curso asignado al profesor'); setTimeout(()=>setSuccess(''), 3000); load();
+      setAssignMateriaToTeacherId(''); setSuccess('✓ Curso asignado al profesor'); setTimeout(()=>setSuccess(''), 3000); 
+      handleOpenTeacherModal(viewTeacher); // Recarga las estadísticas del profe
+      load();
     } catch(e) {}
     setSaving(false);
   };
@@ -239,6 +266,7 @@ export default function AdminDashboard() {
     if (!window.confirm('¿Quitarle esta materia al profesor?')) return;
     try {
       await updateDoc(doc(db, 'courses', courseId), { teacherId: '' });
+      handleOpenTeacherModal(viewTeacher); // Recarga estadísticas
       load();
     } catch (e) { console.error(e); }
   };
@@ -249,7 +277,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // ── SISTEMA DE REPORTES PROFESIONALES (XLSX) ──
   const generateProfessionalReport = async (type) => {
     setReportBusy(true);
     let XLSX;
@@ -263,16 +290,16 @@ export default function AdminDashboard() {
     if (type === 'academic') {
       filename = `Base_Datos_Alumnos_${dateStr}`;
       const rows = students.map(s => [
-        s.rut, s.name, s.email || 'N/A', classGroups.find(cg => cg.id === s.classGroupId)?.name || 'Sin Aula Asignada',
-        s.enrolledCourses?.length || 0, s.guardian || 'N/A', s.phone || 'N/A'
+        s.rut, s.name, s.email || 'N/A', classGroups.find(cg => cg.id === s.classGroupId)?.name || 'Sin Aula',
+        s.enrolledCourses?.length || 0, s.xp || 0, s.guardian || 'N/A', s.phone || 'N/A'
       ]);
-      sheets.push({ name: 'Matrícula', headers: ['RUT', 'Nombre Completo', 'Email Institucional', 'Aula Base', 'Total Materias Inscritas', 'Nombre Apoderado', 'Teléfono'], rows, colWidths: [15, 35, 30, 20, 25, 25, 15] });
+      sheets.push({ name: 'Matrícula', headers: ['RUT', 'Nombre Completo', 'Email Institucional', 'Aula Base', 'Materias', 'Puntos XP', 'Apoderado', 'Teléfono'], rows, colWidths: [15, 35, 30, 20, 15, 15, 25, 15] });
     } else if (type === 'teachers') {
       filename = `Plantilla_Docente_${dateStr}`;
       const rows = teachers.map(t => [
         t.rut, t.name, t.email || 'N/A', t.specialty || 'General', courses.filter(c => c.teacherId === t.id).length, t.phone || 'N/A'
       ]);
-      sheets.push({ name: 'Docentes Activos', headers: ['RUT', 'Nombre Profesor', 'Correo Electrónico', 'Especialidad', 'Total Materias Impartidas', 'Teléfono'], rows, colWidths: [15, 35, 30, 20, 25, 15] });
+      sheets.push({ name: 'Docentes Activos', headers: ['RUT', 'Nombre Profesor', 'Correo Electrónico', 'Especialidad', 'Materias Impartidas', 'Teléfono'], rows, colWidths: [15, 35, 30, 20, 25, 15] });
     } else if (type === 'courses') {
       filename = `Estructura_Institucional_${dateStr}`;
       const rows = courses.map(c => {
@@ -284,16 +311,13 @@ export default function AdminDashboard() {
     }
 
     const wb = XLSX.utils.book_new();
-    for (const { name, headers, rows, colWidths } of sheets) {
-      const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-      if (colWidths) ws['!cols'] = colWidths.map(w => ({ wch: w }));
-      XLSX.utils.book_append_sheet(wb, ws, name);
-    }
+    const ws = XLSX.utils.aoa_to_sheet([sheets[0].headers, ...sheets[0].rows]);
+    ws['!cols'] = sheets[0].colWidths.map(w => ({ wch: w }));
+    XLSX.utils.book_append_sheet(wb, ws, sheets[0].name);
     XLSX.writeFile(wb, `${filename}.xlsx`);
     setReportBusy(false);
   };
 
-  // Creación de la Bitácora Cronológica
   const timelineData = [...students.map(s => ({...s, _type:'student'})), ...courses.map(c => ({...c, _type:'course'}))]
     .filter(item => item.createdAt)
     .sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis())
@@ -305,14 +329,13 @@ export default function AdminDashboard() {
       <main style={{ maxWidth:'1100px', margin:'0 auto', padding:'30px 20px' }}>
         <div className="anim-fade-up" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom:'28px' }}>
           <div>
-            <h1 style={{ fontFamily:"'Lora',serif", fontSize:'26px', fontWeight:700, marginBottom:'4px' }}>Centro de Comando</h1>
+            <h1 className="glow-text" style={{ fontFamily:"'Lora',serif", fontSize:'26px', fontWeight:700, marginBottom:'4px' }}>Centro de Comando</h1>
             <p style={{ color:C.accent, fontSize:'13px', fontWeight: 600 }}>{school?.name || actualSchoolId} · Administración Central</p>
           </div>
         </div>
 
         {success && <div className="anim-fade-up" style={{ marginBottom:'14px' }}><Alert type="success">{success}</Alert></div>}
 
-        {/* STAT CARDS INTERACTIVAS */}
         <div className="anim-fade-up anim-d1" style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(170px,1fr))', gap:'12px', marginBottom:'28px' }}>
           <div onClick={()=>setTab('Profesores')} style={{ cursor:'pointer', transition:'.2s' }}><StatCard label="Docentes" value={teachers.length} icon={<Ico.Teacher s={24} c={C.accent}/>} color={C.accent} /></div>
           <div onClick={()=>setTab('Alumnos')} style={{ cursor:'pointer', transition:'.2s' }}><StatCard label="Alumnos" value={students.length} icon={<Ico.Student s={24} c={C.green}/>} color={C.green} /></div>
@@ -322,13 +345,13 @@ export default function AdminDashboard() {
 
         <Tabs tabs={['Resumen', 'Cursos y Materias', 'Profesores', 'Alumnos', 'Reportes']} active={tab} onChange={setTab} />
 
-        {loading ? <div style={{ display:'flex', justifyContent:'center', padding:'50px' }}><Spinner size={36} /></div> : (
+        {loading ? <div style={{ display:'flex', justifyContent:'center', padding:'50px' }}><Spinner size={36} color={C.accent} /></div> : (
           <>
             {/* --- PESTAÑA: RESUMEN --- */}
             {tab === 'Resumen' && (
-              <div className="anim-fade-up" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+              <div className="anim-fade-up glass" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', padding:'20px', borderRadius:'16px' }}>
                 <Card style={{ background:`${C.accent}08`, borderColor:`${C.accent}25` }}>
-                  <h3 style={{ fontWeight:700, marginBottom:'12px', color:C.accent, display:'flex', alignItems:'center', gap:'8px' }}><Ico.Settings s={20} c={C.accent} /> Accesos Rápidos</h3>
+                  <h3 style={{ fontWeight:700, marginBottom:'12px', color:C.accent, display:'flex', alignItems:'center', gap:'8px' }}><Ico.Settings s={20} /> Accesos Rápidos</h3>
                   <div style={{ display:'flex', flexDirection: 'column', gap:'10px' }}>
                     <button onClick={()=>setClassGroupModal(true)} style={{ display:'flex', alignItems:'center', gap:'8px', background:C.amber, color:'#111', padding:'10px 14px', borderRadius:'8px', border:'none', cursor:'pointer', fontWeight:600, fontSize:'13px' }}><Ico.Plus s={16} /> Crear Aula Escolar</button>
                     <button onClick={()=>{ setNewUser({...initialUserState, role:'teacher'}); setUserModal(true); }} style={{ display:'flex', alignItems:'center', gap:'8px', background:C.accent, color:'#fff', padding:'10px 14px', borderRadius:'8px', border:'none', cursor:'pointer', fontWeight:600, fontSize:'13px' }}><Ico.Plus s={16} /> Registrar Profesor</button>
@@ -347,10 +370,10 @@ export default function AdminDashboard() {
                     const aulasMaterias = courses.filter(c => c.classGroupId === cg.id);
                     const aulasAlumnos = students.filter(s => s.classGroupId === cg.id).length;
                     return (
-                      <Card key={cg.id} style={{ padding:0, overflow:'hidden', border:`1px solid ${C.border}` }}>
+                      <Card key={cg.id} className="glass" style={{ padding:0, overflow:'hidden', border:`1px solid ${C.border}` }}>
                         <div style={{ background:C.surface, padding:'16px 20px', borderBottom:`1px solid ${C.border}`, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                          <div><div style={{ fontWeight:700, fontSize:'18px' }}>{cg.name}</div><div style={{ fontSize:'12px', color:C.muted }}>Nivel: {cg.level} · {cg.year}</div></div>
-                          <div style={{ textAlign:'center', background:C.card, padding:'6px 12px', borderRadius:'8px', border:`1px solid ${C.border}` }}>
+                          <div><div style={{ fontWeight:700, fontSize:'18px', color:C.text }}>{cg.name}</div><div style={{ fontSize:'12px', color:C.muted }}>Nivel: {cg.level} · {cg.year}</div></div>
+                          <div style={{ textAlign:'center', background:C.card, padding:'6px 12px', borderRadius:'8px', border:`1px solid ${C.borderHover}` }}>
                             <div style={{ fontWeight:700, fontSize:'16px', color:C.green }}>{aulasAlumnos}</div><div style={{ fontSize:'10px', color:C.muted }}>ALUMNOS</div>
                           </div>
                         </div>
@@ -360,7 +383,7 @@ export default function AdminDashboard() {
                             {aulasMaterias.map(mat => {
                               const profe = teachers.find(t => t.id === mat.teacherId);
                               return (
-                                <div key={mat.id} onClick={()=>setEditMateria(mat)} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', background:C.surface, padding:'8px 12px', borderRadius:'8px', cursor:'pointer', border:`1px solid transparent`, transition:'.2s' }} onMouseEnter={e=>e.currentTarget.style.borderColor=C.accent} onMouseLeave={e=>e.currentTarget.style.borderColor='transparent'}>
+                                <div key={mat.id} onClick={()=>setEditMateria(mat)} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', background:C.surface, padding:'8px 12px', borderRadius:'8px', cursor:'pointer', border:`1px solid ${C.borderHover}`, transition:'.2s' }} onMouseEnter={e=>{e.currentTarget.style.borderColor=C.accent; e.currentTarget.style.boxShadow=`0 0 10px ${C.accentSoft}`}} onMouseLeave={e=>{e.currentTarget.style.borderColor=C.borderHover; e.currentTarget.style.boxShadow='none'}}>
                                   <div>
                                     <div style={{ fontWeight:600, fontSize:'13px', color:C.text, display:'flex', alignItems:'center', gap:'6px' }}>{mat.name} <Ico.Edit s={12} c={C.muted}/></div>
                                     <div style={{ fontSize:'11px', color:C.muted, display:'flex', alignItems:'center', gap:'4px' }}><Ico.Teacher s={10}/> {profe ? profe.name : <span style={{color:C.red}}>Sin Asignar</span>}</div>
@@ -387,16 +410,16 @@ export default function AdminDashboard() {
                   {teachers.map(t=>{
                     const status = getRealOnlineStatus(t.lastActive);
                     return (
-                      <Card key={t.id} style={{ padding:'18px', opacity: t.uid ? 1 : 0.7 }}>
+                      <Card key={t.id} className="glass" style={{ padding:'18px', opacity: t.uid ? 1 : 0.7, border:`1px solid ${C.borderHover}` }}>
                         <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'14px' }}>
-                          <div style={{ width:42,height:42,borderRadius:'50%',background:`${C.accent}20`,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,color:C.accent }}><Ico.Teacher s={20} /></div>
-                          <div> <div style={{ fontWeight:700, fontSize: '15px' }}>{t.name}</div> <div style={{ color:C.muted,fontSize:'12px' }}>RUT: {t.rut}</div> </div>
+                          <div style={{ width:42,height:42,borderRadius:'50%',background:`${C.accent}20`,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,color:C.accent, border:`1px solid ${C.accent}40` }}><Ico.Teacher s={20} /></div>
+                          <div> <div style={{ fontWeight:700, fontSize: '15px', color:C.text }}>{t.name}</div> <div style={{ color:C.muted,fontSize:'12px' }}>RUT: {t.rut}</div> </div>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: C.surface, padding: '10px 12px', borderRadius: '8px', marginBottom: '14px' }}>
-                          <div style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', color:status.color }}><span style={{ width:8, height:8, borderRadius:'50%', background:status.dot }}></span> {status.text}</div>
+                          <div style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', color:status.color }}><span style={{ width:8, height:8, borderRadius:'50%', background:status.dot, boxShadow:`0 0 8px ${status.dot}` }}></span> {status.text}</div>
                           <span style={{ fontSize: '12px', color: C.textSub, fontWeight: 600 }}>{courses.filter(c => c.teacherId === t.id).length} Materias</span>
                         </div>
-                        <button onClick={()=>setViewTeacher(t)} style={{ width:'100%', display:'flex', justifyContent:'center', alignItems:'center', gap:'6px', background:`${C.accent}15`, color:C.accent, border:'none', padding:'10px', borderRadius:'8px', cursor:'pointer', fontSize:'13px', fontWeight:600 }}><Ico.Eye s={16}/> Gestionar Docente</button>
+                        <button onClick={()=>handleOpenTeacherModal(t)} style={{ width:'100%', display:'flex', justifyContent:'center', alignItems:'center', gap:'6px', background:`${C.accent}15`, color:C.accent, border:`1px solid ${C.accent}30`, padding:'10px', borderRadius:'8px', cursor:'pointer', fontSize:'13px', fontWeight:600, transition:'.2s' }} onMouseEnter={e=>e.currentTarget.style.background=`${C.accent}30`} onMouseLeave={e=>e.currentTarget.style.background=`${C.accent}15`}><Ico.Eye s={16}/> Ver Expediente</button>
                       </Card>
                     )
                   })}
@@ -412,12 +435,18 @@ export default function AdminDashboard() {
                   {students.map(s=>{
                     const aula = classGroups.find(cg => cg.id === s.classGroupId);
                     return (
-                      <Card key={s.id} style={{ padding:'18px', opacity: s.uid ? 1 : 0.8, borderLeft: aula ? `4px solid ${C.green}` : `4px solid ${C.amber}` }}>
+                      <Card key={s.id} className="glass" style={{ padding:'18px', opacity: s.uid ? 1 : 0.8, borderLeft: aula ? `4px solid ${C.green}` : `4px solid ${C.amber}`, borderRight:`1px solid ${C.border}`, borderTop:`1px solid ${C.border}`, borderBottom:`1px solid ${C.border}` }}>
                         <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
-                          <div style={{ width:40,height:40,borderRadius:'50%',background:`${C.green}20`,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,color:C.green, flexShrink:0 }}><Ico.Student s={20} /></div>
-                          <div><div style={{ fontWeight:700,fontSize:'15px' }}>{s.name}</div><div style={{ color:C.textSub,fontSize:'12px' }}>{aula ? aula.name : 'Sin Aula Base'}</div></div>
+                          <div style={{ width:40,height:40,borderRadius:'50%',background:`${C.green}20`,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,color:C.green, flexShrink:0, border:`1px solid ${C.green}40` }}><Ico.Student s={20} /></div>
+                          <div>
+                            <div style={{ fontWeight:700,fontSize:'15px', color:C.text }}>{s.name}</div>
+                            <div style={{ color:C.textSub,fontSize:'12px', display:'flex', gap:'8px', alignItems:'center' }}>
+                              <span>{aula ? aula.name : 'Sin Aula Base'}</span>
+                              <span style={{ color:C.amber, fontWeight:800 }}>⚡ {s.xp || 0} XP</span>
+                            </div>
+                          </div>
                         </div>
-                        <button onClick={()=>setAssignModal(s)} style={{ marginTop:'14px', width:'100%', display:'flex', justifyContent:'center', alignItems:'center', gap:'6px', background:`${C.green}15`, color:C.green, border:'none', borderRadius:'8px', cursor:'pointer', fontSize:'13px', fontWeight:600, padding:'10px' }}><Ico.Eye s={16}/> Ver Expediente</button>
+                        <button onClick={()=>handleOpenStudentModal(s)} style={{ marginTop:'14px', width:'100%', display:'flex', justifyContent:'center', alignItems:'center', gap:'6px', background:`${C.green}15`, color:C.green, border:`1px solid ${C.green}30`, borderRadius:'8px', cursor:'pointer', fontSize:'13px', fontWeight:600, padding:'10px', transition:'.2s' }} onMouseEnter={e=>e.currentTarget.style.background=`${C.green}30`} onMouseLeave={e=>e.currentTarget.style.background=`${C.green}15`}><Ico.Eye s={16}/> Analizar Perfil</button>
                       </Card>
                     )
                   })}
@@ -425,25 +454,24 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* --- PESTAÑA REPORTES (NUEVA VERSIÓN) --- */}
+            {/* --- PESTAÑA REPORTES --- */}
             {tab === 'Reportes' && (
               <div className="anim-fade-up">
                 <SectionHeader title="Inteligencia Institucional" sub="Exportación de bases de datos y bitácora de actividad general en formato Excel (.xlsx)." />
                 
-                {/* Módulos de Descarga */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px', marginBottom: '35px' }}>
-                  <Card style={{ padding: '24px', borderTop: `4px solid ${C.green}` }}>
+                  <Card className="glass" style={{ padding: '24px', borderTop: `4px solid ${C.green}` }}>
                     <div style={{ display:'flex', gap:'15px', marginBottom:'20px' }}>
                       <div style={{ width:48, height:48, borderRadius:'12px', background:`${C.green}15`, color:C.green, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}><Ico.Student s={24}/></div>
                       <div>
                         <div style={{ fontWeight:700, fontSize:'16px', color:C.text }}>Data Estudiantil</div>
-                        <div style={{ fontSize:'12px', color:C.muted, marginTop:'4px', lineHeight:1.5 }}>Directorio completo de alumnos, apoderados, medios de contacto y aulas base.</div>
+                        <div style={{ fontSize:'12px', color:C.muted, marginTop:'4px', lineHeight:1.5 }}>Directorio completo de alumnos, apoderados, medios de contacto, aulas base y XP.</div>
                       </div>
                     </div>
                     <Btn full outline color={C.green} onClick={() => generateProfessionalReport('academic')} loading={reportBusy} icon={<Ico.Download s={16}/>}>Descargar Base de Alumnos</Btn>
                   </Card>
 
-                  <Card style={{ padding: '24px', borderTop: `4px solid ${C.accent}` }}>
+                  <Card className="glass" style={{ padding: '24px', borderTop: `4px solid ${C.accent}` }}>
                     <div style={{ display:'flex', gap:'15px', marginBottom:'20px' }}>
                       <div style={{ width:48, height:48, borderRadius:'12px', background:`${C.accent}15`, color:C.accent, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}><Ico.Teacher s={24}/></div>
                       <div>
@@ -454,7 +482,7 @@ export default function AdminDashboard() {
                     <Btn full outline color={C.accent} onClick={() => generateProfessionalReport('teachers')} loading={reportBusy} icon={<Ico.Download s={16}/>}>Descargar Ficha Docente</Btn>
                   </Card>
 
-                  <Card style={{ padding: '24px', borderTop: `4px solid ${C.amber}` }}>
+                  <Card className="glass" style={{ padding: '24px', borderTop: `4px solid ${C.amber}` }}>
                     <div style={{ display:'flex', gap:'15px', marginBottom:'20px' }}>
                       <div style={{ width:48, height:48, borderRadius:'12px', background:`${C.amber}15`, color:C.amber, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}><Ico.Book s={24}/></div>
                       <div>
@@ -466,11 +494,10 @@ export default function AdminDashboard() {
                   </Card>
                 </div>
 
-                {/* Bitácora Visual */}
                 <SectionHeader title="Bitácora del Sistema" sub="Últimos registros en la plataforma" />
-                <Card style={{ padding: '0', overflow: 'hidden' }}>
+                <Card className="glass" style={{ padding: '0', overflow: 'hidden' }}>
                    <div style={{ padding: '16px 24px', background: C.surface, borderBottom: `1px solid ${C.border}`, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                      <span style={{ fontWeight: 600, fontSize: '14px', display:'flex', alignItems:'center', gap:'8px' }}><Ico.Activity s={16} c={C.accent}/> Cronología de Actualizaciones</span>
+                      <span style={{ fontWeight: 600, fontSize: '14px', display:'flex', alignItems:'center', gap:'8px', color:C.text }}><Ico.Activity s={16} c={C.accent}/> Cronología de Actualizaciones</span>
                       <Badge color={C.accent}>En tiempo real</Badge>
                    </div>
                    <div style={{ padding: '12px 24px' }}>
@@ -499,40 +526,66 @@ export default function AdminDashboard() {
 
       {/* ── MODALES ───────────────────────────────────────────────────────────── */}
       
-      {/* MODAL: EDITAR MATERIA */}
-      <Modal open={!!editMateria} onClose={()=>{setEditMateria(null); setModalErr('');}} title="Editar Materia">
+      {/* MODAL: EDITAR MATERIA (AHORA MUESTRA ESTADÍSTICAS) */}
+      <Modal open={!!editMateria} onClose={()=>{setEditMateria(null); setModalErr('');}} title="Detalle de la Materia">
         <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
+          <div style={{ background:`${C.violet}10`, border:`1px solid ${C.violet}30`, padding:'16px', borderRadius:'12px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+            <div>
+              <div style={{ color:C.violet, fontSize:'11px', fontWeight:800, textTransform:'uppercase' }}>Alumnos Cursando</div>
+              <div style={{ color:C.text, fontSize:'22px', fontWeight:700 }}>{students.filter(s => s.enrolledCourses?.includes(editMateria?.id)).length}</div>
+            </div>
+            <Ico.Users s={30} c={C.violet} />
+          </div>
+          
+          <div style={{ height:'1px', background:C.border, margin:'10px 0' }} />
+          <div style={{ fontSize:'12px', color:C.muted, fontWeight:700, textTransform:'uppercase' }}>Configuración de la Materia</div>
+
           <Input label="Nombre de la Materia" value={editMateria?.name || ''} onChange={e=>setEditMateria({...editMateria, name:e.target.value})} />
           <Select label="Profesor a cargo" value={editMateria?.teacherId || ''} onChange={e=>setEditMateria({...editMateria, teacherId:e.target.value})} options={[{value:'',label:'Sin profesor'},...teachers.map(t=>({value:t.id,label:t.name}))]} />
           {modalErr && <Alert type="error">{modalErr}</Alert>}
-          <Btn full loading={saving} color={C.accent} onClick={handleUpdateMateria}>Actualizar Materia</Btn>
+          <Btn full loading={saving} color={C.accent} onClick={handleUpdateMateria}>Actualizar Datos</Btn>
         </div>
       </Modal>
 
-      {/* MODAL: GESTIONAR PROFESOR (EXPEDIENTE DETALLADO) */}
-      <Modal open={!!viewTeacher} onClose={() => {setViewTeacher(null); setAssignMateriaToTeacherId('');}} title={`Expediente Docente`}>
+      {/* MODAL: EXPEDIENTE DOCENTE (SÚPER DETALLADO) */}
+      <Modal open={!!viewTeacher} onClose={() => {setViewTeacher(null); setAssignMateriaToTeacherId('');}} title={`Expediente Analítico Docente`}>
         <div style={{ display:'flex', flexDirection:'column', gap:'20px' }}>
-          <div style={{ display:'flex', alignItems:'center', gap:'16px', background:`${C.accent}08`, border:`1px solid ${C.accent}20`, padding:'18px', borderRadius:'12px' }}>
-            <div style={{ width:50,height:50,borderRadius:'50%',background:C.accent,color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'22px' }}><Ico.Teacher s={24}/></div>
+          
+          {/* Ficha Superior */}
+          <div style={{ display:'flex', alignItems:'center', gap:'16px', background:`linear-gradient(135deg, ${C.accent}15, transparent)`, border:`1px solid ${C.accent}30`, padding:'18px', borderRadius:'12px' }}>
+            <div style={{ width:56,height:56,borderRadius:'50%',background:C.accent,color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'22px', boxShadow:`0 0 15px ${C.accentSoft}` }}><Ico.Teacher s={28}/></div>
             <div>
-              <div style={{ fontWeight:700, fontSize:'18px' }}>{viewTeacher?.name}</div>
-              <div style={{ color:C.textSub, fontSize:'13px' }}>RUT: {viewTeacher?.rut}</div>
+              <div style={{ fontWeight:700, fontSize:'18px', color:C.text }}>{viewTeacher?.name}</div>
+              <div style={{ color:C.textSub, fontSize:'13px', display:'flex', gap:'8px', marginTop:'4px' }}>
+                <span>RUT: {viewTeacher?.rut}</span> | <span>{viewTeacher?.specialty || 'Docente General'}</span>
+              </div>
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-            <div style={{ background: C.surface, padding: '12px', borderRadius: '8px', border: `1px solid ${C.border}` }}>
-              <div style={{ fontSize: '11px', color: C.muted, textTransform: 'uppercase', marginBottom: '4px', display:'flex', alignItems:'center', gap:'4px' }}><Ico.Mail s={12}/> Email Institucional</div>
-              <div style={{ fontSize: '13px', fontWeight: 600 }}>{viewTeacher?.email || 'No registrado'}</div>
+          {/* Tarjetas Analíticas del Profesor */}
+          {analyzingStats ? (
+            <div style={{ padding:'20px', textAlign:'center', color:C.accent }}><Spinner size={24} color={C.accent} /> Calculando métricas...</div>
+          ) : teacherStats && (
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:'10px' }}>
+              <div style={{ background: C.surface, padding: '16px', borderRadius: '12px', border: `1px solid ${C.border}`, textAlign:'center' }}>
+                <div style={{ fontSize: '24px', fontWeight: 800, color: C.accent }}>{teacherStats.totalCourses}</div>
+                <div style={{ fontSize: '10px', color: C.muted, textTransform: 'uppercase', marginTop: '4px', fontWeight:700 }}>Cursos</div>
+              </div>
+              <div style={{ background: C.surface, padding: '16px', borderRadius: '12px', border: `1px solid ${C.border}`, textAlign:'center' }}>
+                <div style={{ fontSize: '24px', fontWeight: 800, color: C.green }}>{teacherStats.totalStudents}</div>
+                <div style={{ fontSize: '10px', color: C.muted, textTransform: 'uppercase', marginTop: '4px', fontWeight:700 }}>Alumnos</div>
+              </div>
+              <div style={{ background: C.surface, padding: '16px', borderRadius: '12px', border: `1px solid ${C.border}`, textAlign:'center' }}>
+                <div style={{ fontSize: '24px', fontWeight: 800, color: C.amber }}>{teacherStats.totalClassesUploaded}</div>
+                <div style={{ fontSize: '10px', color: C.muted, textTransform: 'uppercase', marginTop: '4px', fontWeight:700 }}>Clases Creadas</div>
+              </div>
             </div>
-            <div style={{ background: C.surface, padding: '12px', borderRadius: '8px', border: `1px solid ${C.border}` }}>
-              <div style={{ fontSize: '11px', color: C.muted, textTransform: 'uppercase', marginBottom: '4px', display:'flex', alignItems:'center', gap:'4px' }}><Ico.Phone s={12}/> Especialidad</div>
-              <div style={{ fontSize: '13px', fontWeight: 600 }}>{viewTeacher?.specialty || 'General'}</div>
-            </div>
-          </div>
+          )}
           
+          <div style={{ height:'1px', background:C.border }} />
+
           <div style={{ background:C.surface, padding:'16px', borderRadius:'10px', border:`1px solid ${C.border}` }}>
-            <div style={{ fontWeight:600, fontSize:'12px', color:C.textSub, textTransform:'uppercase', marginBottom:'10px' }}>Vincular materia existente al docente</div>
+            <div style={{ fontWeight:600, fontSize:'12px', color:C.textSub, textTransform:'uppercase', marginBottom:'10px' }}>Vincular nueva materia al docente</div>
             <div style={{ display:'flex', gap:'10px' }}>
               <div style={{ flex:1 }}>
                 <Select value={assignMateriaToTeacherId} onChange={e=>setAssignMateriaToTeacherId(e.target.value)} options={[{value:'',label:'Selecciona una materia...'},...courses.filter(c=>c.teacherId!==viewTeacher?.id).map(c=>({value:c.id,label:`${c.name} (${classGroups.find(cg=>cg.id===c.classGroupId)?.name||''})`}))]} />
@@ -542,15 +595,18 @@ export default function AdminDashboard() {
           </div>
 
           <div>
-            <div style={{ fontWeight:600, fontSize:'13px', color:C.textSub, textTransform:'uppercase', marginBottom: '10px' }}>Materias Impartidas Actualmente ({courses.filter(c => c.teacherId === viewTeacher?.id).length})</div>
+            <div style={{ fontWeight:600, fontSize:'13px', color:C.textSub, textTransform:'uppercase', marginBottom: '10px' }}>Malla de Materias Impartidas</div>
             <div style={{ display:'flex', flexDirection:'column', gap:'8px' }}>
-              {courses.filter(c => c.teacherId === viewTeacher?.id).length === 0 && <div style={{ color:C.muted, fontSize:'13px', textAlign:'center', padding:'10px', background:C.surface, borderRadius:'8px' }}>Sin materias asignadas.</div>}
+              {courses.filter(c => c.teacherId === viewTeacher?.id).length === 0 && <div style={{ color:C.muted, fontSize:'13px', textAlign:'center', padding:'15px', background:C.surface, borderRadius:'8px', border:`1px dashed ${C.border}` }}>Sin materias asignadas.</div>}
               {courses.filter(c => c.teacherId === viewTeacher?.id).map(c => {
                 const aula = classGroups.find(cg => cg.id === c.classGroupId);
                 return (
-                  <div key={c.id} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', background:C.card, border:`1px solid ${C.border}`, padding:'12px 14px', borderRadius:'8px' }}>
-                    <div><div style={{ fontWeight:600, fontSize:'14px' }}>{c.name}</div><div style={{ color:C.muted, fontSize:'11px' }}>Aula Base: {aula ? aula.name : 'Independiente'}</div></div>
-                    <button onClick={()=>handleRemoveCourseFromTeacher(c.id)} style={{ background:'none', border:'none', color:C.red, cursor:'pointer', opacity:0.7 }}><Ico.Trash s={16}/></button>
+                  <div key={c.id} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', background:C.card, border:`1px solid ${C.borderHover}`, padding:'12px 16px', borderRadius:'8px' }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
+                      <Ico.Book s={16} c={C.accent}/>
+                      <div><div style={{ fontWeight:700, fontSize:'14px', color:C.text }}>{c.name}</div><div style={{ color:C.muted, fontSize:'11px' }}>Aula Base: {aula ? aula.name : 'Independiente'}</div></div>
+                    </div>
+                    <button onClick={()=>handleRemoveCourseFromTeacher(c.id)} style={{ background:`${C.red}15`, border:'none', color:C.red, cursor:'pointer', padding:'8px', borderRadius:'8px', transition:'.2s' }}><Ico.Trash s={14}/></button>
                   </div>
                 )
               })}
@@ -559,29 +615,43 @@ export default function AdminDashboard() {
         </div>
       </Modal>
       
-      {/* MODAL: FICHA ALUMNO (EXPEDIENTE DETALLADO) */}
-      <Modal open={!!assignModal} onClose={() => { setAssignModal(null); setModalErr(''); setSelectedAulaId(''); setAssignCourseIdToStudent(''); }} title={`Expediente del Alumno`}>
+      {/* MODAL: EXPEDIENTE ALUMNO (SÚPER DETALLADO CON GAMIFICACIÓN) */}
+      <Modal open={!!assignModal} onClose={() => { setAssignModal(null); setModalErr(''); setSelectedAulaId(''); setAssignCourseIdToStudent(''); }} title={`Análisis del Estudiante`}>
         <div style={{ display:'flex', flexDirection:'column', gap:'18px' }}>
           
-          <div style={{ display:'flex', alignItems:'center', gap:'16px', background:`${C.green}08`, border:`1px solid ${C.green}20`, padding:'18px', borderRadius:'12px' }}>
-            <div style={{ width:56,height:56,borderRadius:'50%',background:C.green,color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'22px' }}><Ico.Student s={28}/></div>
+          <div style={{ display:'flex', alignItems:'center', gap:'16px', background:`linear-gradient(135deg, ${C.green}15, transparent)`, border:`1px solid ${C.green}30`, padding:'18px', borderRadius:'12px' }}>
+            <div style={{ width:56,height:56,borderRadius:'50%',background:C.green,color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'22px', boxShadow:`0 0 15px ${C.greenSoft}` }}><Ico.Student s={28}/></div>
             <div>
               <div style={{ fontWeight:700, fontSize:'18px', color:C.text }}>{assignModal?.name}</div>
               <div style={{ color:C.textSub, fontSize:'13px', marginTop:'4px' }}>RUT: {assignModal?.rut}</div>
             </div>
+            <div style={{ marginLeft:'auto', textAlign:'right' }}>
+              <div style={{ fontSize:'20px', fontWeight:800, color:C.amber, fontFamily:"'Press Start 2P', cursive" }}>{assignModal?.xp || 0}</div>
+              <div style={{ fontSize:'10px', color:C.amber, textTransform:'uppercase', fontWeight:700, letterSpacing:'0.1em' }}>Puntos XP</div>
+            </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-            <div style={{ background: C.surface, padding: '12px', borderRadius: '8px', border: `1px solid ${C.border}` }}>
-              <div style={{ fontSize: '11px', color: C.muted, textTransform: 'uppercase', marginBottom: '4px', display:'flex', alignItems:'center', gap:'4px' }}><Ico.Mail s={12}/> Email / Contacto</div>
-              <div style={{ fontSize: '13px', fontWeight: 600 }}>{assignModal?.email || 'No registrado'}</div>
-              <div style={{ fontSize: '12px', color: C.textSub, marginTop:'2px' }}>{assignModal?.phone || ''}</div>
+          {/* Analíticas del Estudiante */}
+          {analyzingStats ? (
+            <div style={{ padding:'20px', textAlign:'center', color:C.green }}><Spinner size={24} color={C.green} /> Procesando métricas...</div>
+          ) : studentStats && (
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px' }}>
+              <div style={{ background: C.surface, padding: '16px', borderRadius: '12px', border: `1px solid ${C.border}` }}>
+                <div style={{ fontSize: '11px', color: C.muted, textTransform: 'uppercase', marginBottom: '6px', fontWeight:700 }}>Estado de Riesgo</div>
+                <div style={{ display:'flex', alignItems:'center', gap:'8px', fontWeight: 800, color: studentStats.riskScore <= 39 ? C.red : studentStats.riskScore <= 69 ? C.amber : C.green, fontSize:'16px' }}>
+                  {studentStats.riskScore <= 39 ? '🔴 Crítico' : studentStats.riskScore <= 69 ? '🟡 En Observación' : '🟢 Óptimo'}
+                </div>
+              </div>
+              <div style={{ background: C.surface, padding: '16px', borderRadius: '12px', border: `1px solid ${C.border}` }}>
+                <div style={{ fontSize: '11px', color: C.muted, textTransform: 'uppercase', marginBottom: '6px', fontWeight:700 }}>Promedio Quizes</div>
+                <div style={{ display:'flex', alignItems:'center', gap:'8px', fontWeight: 800, color: C.text, fontSize:'18px' }}>
+                  🎯 {studentStats.avgQuizScore != null ? `${studentStats.avgQuizScore}%` : 'S/N'}
+                </div>
+              </div>
             </div>
-            <div style={{ background: C.surface, padding: '12px', borderRadius: '8px', border: `1px solid ${C.border}` }}>
-              <div style={{ fontSize: '11px', color: C.muted, textTransform: 'uppercase', marginBottom: '4px', display:'flex', alignItems:'center', gap:'4px' }}><Ico.Users s={12}/> Apoderado / Tutor</div>
-              <div style={{ fontSize: '13px', fontWeight: 600 }}>{assignModal?.guardian || 'No registrado'}</div>
-            </div>
-          </div>
+          )}
+
+          <div style={{ height:'1px', background:C.border }} />
 
           <div style={{ background: C.surface, padding: '16px', borderRadius: '12px', border: `1px solid ${C.border}` }}>
             <div style={{ fontWeight: 600, fontSize: '13px', color: C.textSub, marginBottom: '10px', textTransform: 'uppercase' }}>Aula Escolar Base</div>
@@ -592,7 +662,7 @@ export default function AdminDashboard() {
                     ...classGroups.map(cg => ({ value: cg.id, label: `${cg.name} (${cg.year})` }))
                   ]} />
               </div>
-              <Btn onClick={handleChangeStudentAula} disabled={!selectedAulaId || selectedAulaId === assignModal?.classGroupId} color={C.green}>Actualizar Aula</Btn>
+              <Btn onClick={handleChangeStudentAula} disabled={!selectedAulaId || selectedAulaId === assignModal?.classGroupId} color={C.green}>Actualizar</Btn>
             </div>
           </div>
           
@@ -616,15 +686,15 @@ export default function AdminDashboard() {
             </div>
 
             {(!assignModal?.enrolledCourses || assignModal.enrolledCourses.length === 0) ? (
-              <div style={{ background: C.surface, padding: '12px', borderRadius: '8px', color: C.muted, fontSize: '13px', textAlign: 'center' }}>El alumno no cursa ninguna materia aún.</div>
+              <div style={{ background: C.surface, padding: '12px', borderRadius: '8px', color: C.muted, fontSize: '13px', textAlign: 'center', border:`1px dashed ${C.border}` }}>El alumno no cursa ninguna materia aún.</div>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns:'1fr 1fr', gap: '8px' }}>
                 {assignModal.enrolledCourses.map(courseId => {
                    const cInfo = courses.find(c => c.id === courseId);
                    return (
-                    <div key={courseId} style={{ display: 'flex', alignItems:'center', justifyContent:'space-between', background: C.card, padding: '10px 12px', borderRadius: '8px', border: `1px solid ${C.border}` }}>
-                      <div style={{ display:'flex', alignItems:'center', fontSize: '12px', fontWeight: 600 }}><Ico.Book s={14} c={C.accent}/> &nbsp;{cInfo ? cInfo.name : 'Materia Borrada'}</div>
-                      <button onClick={()=>handleRemoveCourseFromStudent(courseId)} style={{ background:'none', border:'none', color:C.red, cursor:'pointer', opacity:0.6 }}><Ico.Trash s={14}/></button>
+                    <div key={courseId} style={{ display: 'flex', alignItems:'center', justifyContent:'space-between', background: C.card, padding: '10px 12px', borderRadius: '8px', border: `1px solid ${C.borderHover}` }}>
+                      <div style={{ display:'flex', alignItems:'center', fontSize: '12px', fontWeight: 600, color:C.text }}><Ico.Book s={14} c={C.accent}/> &nbsp;{cInfo ? cInfo.name : 'Materia Borrada'}</div>
+                      <button onClick={()=>handleRemoveCourseFromStudent(courseId)} style={{ background:`${C.red}15`, border:'none', color:C.red, cursor:'pointer', padding:'6px', borderRadius:'6px' }}><Ico.Trash s={12}/></button>
                     </div>
                    )
                 })}
@@ -635,7 +705,7 @@ export default function AdminDashboard() {
         </div>
       </Modal>
 
-      {/* MODAL 1: CREAR AULA BASE */}
+      {/* MODALES DE CREACIÓN BÁSICA */}
       <Modal open={classGroupModal} onClose={()=>{ setClassGroupModal(false); setModalErr(''); }} title="Crear Nueva Aula Escolar">
         <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
           <Input label="Nombre del Aula (Ej: 8vo Básico A)" placeholder="8vo Básico A" value={newClassGroup.name} onChange={e=>setNewClassGroup(c=>({...c,name:e.target.value}))} />
@@ -648,7 +718,6 @@ export default function AdminDashboard() {
         </div>
       </Modal>
 
-      {/* MODAL 2: CREAR MATERIA PARA UN AULA */}
       <Modal open={!!materiaModal} onClose={()=>{ setMateriaModal(null); setModalErr(''); }} title={`Añadir Materia al Aula`}>
         <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
           <Input label="Nombre de la Materia" placeholder="Ej: Ciencias Naturales" value={newMateria.name} onChange={e=>setNewMateria(c=>({...c,name:e.target.value}))} />
@@ -658,7 +727,6 @@ export default function AdminDashboard() {
         </div>
       </Modal>
 
-      {/* MODAL 3: CREAR USUARIOS (Profesor / Alumno) */}
       <Modal open={userModal} onClose={()=>{ setUserModal(false); setModalErr(''); }} title={newUser.role==='teacher' ? 'Registrar Docente' : 'Matricular Alumno'}>
         <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px' }}>
