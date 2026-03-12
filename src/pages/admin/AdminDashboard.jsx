@@ -9,7 +9,7 @@ import { db } from '@/firebase/config';
 import { getStudentMetrics } from '@/services/analyticsService';
 import { analyzeDropoutRisk } from '@/services/aiService';
 
-// ── LIBRERÍA DE ICONOS SVG PROFESIONALES ─────────────────────────────────────
+// ── LIBRERÍA DE ICONOS SVG LOCAL DEL ADMIN (CORREGIDA) ───────────────────────
 const Ico = {
   Teacher: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
   Student: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>,
@@ -21,10 +21,11 @@ const Ico = {
   Trash: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>,
   Check: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
   Plus: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
-  Settings: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06A1.65 1.65 0 0 0 19.4 9H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
+  Settings: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 9 4.68V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06A1.65 1.65 0 0 0 19.4 9H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
   Activity: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
   Mail: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>,
-  Phone: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+  Phone: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
+  Edit: ({ s = 20, c = "currentColor" }) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
 };
 
 const initialUserState = { role: 'student', rut: '', name: '', email: '', phone: '', guardian: '', specialty: '', classGroupId: '' };
@@ -121,11 +122,8 @@ export default function AdminDashboard() {
     setViewTeacher(teacher);
     setAnalyzingStats(true);
     try {
-      // 1. Cursos que imparte
       const tCourses = courses.filter(c => c.teacherId === teacher.id).map(c => c.id);
-      // 2. Alumnos matriculados en sus cursos
       const tStudents = students.filter(s => s.enrolledCourses?.some(cId => tCourses.includes(cId)));
-      // 3. Clases publicadas por él
       const classesSnap = await getDocs(query(collection(db, 'classes'), where('teacherId', '==', teacher.id)));
       
       setTeacherStats({
@@ -256,7 +254,7 @@ export default function AdminDashboard() {
     try {
       await updateDoc(doc(db, 'courses', assignMateriaToTeacherId), { teacherId: viewTeacher.id });
       setAssignMateriaToTeacherId(''); setSuccess('✓ Curso asignado al profesor'); setTimeout(()=>setSuccess(''), 3000); 
-      handleOpenTeacherModal(viewTeacher); // Recarga las estadísticas del profe
+      handleOpenTeacherModal(viewTeacher);
       load();
     } catch(e) {}
     setSaving(false);
@@ -266,7 +264,7 @@ export default function AdminDashboard() {
     if (!window.confirm('¿Quitarle esta materia al profesor?')) return;
     try {
       await updateDoc(doc(db, 'courses', courseId), { teacherId: '' });
-      handleOpenTeacherModal(viewTeacher); // Recarga estadísticas
+      handleOpenTeacherModal(viewTeacher);
       load();
     } catch (e) { console.error(e); }
   };
@@ -351,11 +349,11 @@ export default function AdminDashboard() {
             {tab === 'Resumen' && (
               <div className="anim-fade-up glass" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', padding:'20px', borderRadius:'16px' }}>
                 <Card style={{ background:`${C.accent}08`, borderColor:`${C.accent}25` }}>
-                  <h3 style={{ fontWeight:700, marginBottom:'12px', color:C.accent, display:'flex', alignItems:'center', gap:'8px' }}><Ico.Settings s={20} /> Accesos Rápidos</h3>
+                  <h3 style={{ fontWeight:700, marginBottom:'12px', color:C.accent, display:'flex', alignItems:'center', gap:'8px' }}><Ico.Settings s={20} c={C.accent} /> Accesos Rápidos</h3>
                   <div style={{ display:'flex', flexDirection: 'column', gap:'10px' }}>
-                    <button onClick={()=>setClassGroupModal(true)} style={{ display:'flex', alignItems:'center', gap:'8px', background:C.amber, color:'#111', padding:'10px 14px', borderRadius:'8px', border:'none', cursor:'pointer', fontWeight:600, fontSize:'13px' }}><Ico.Plus s={16} /> Crear Aula Escolar</button>
-                    <button onClick={()=>{ setNewUser({...initialUserState, role:'teacher'}); setUserModal(true); }} style={{ display:'flex', alignItems:'center', gap:'8px', background:C.accent, color:'#fff', padding:'10px 14px', borderRadius:'8px', border:'none', cursor:'pointer', fontWeight:600, fontSize:'13px' }}><Ico.Plus s={16} /> Registrar Profesor</button>
-                    <button onClick={()=>{ setNewUser({...initialUserState, role:'student'}); setUserModal(true); }} style={{ display:'flex', alignItems:'center', gap:'8px', background:C.green, color:'#fff', padding:'10px 14px', borderRadius:'8px', border:'none', cursor:'pointer', fontWeight:600, fontSize:'13px' }}><Ico.Plus s={16} /> Matricular Alumno</button>
+                    <button onClick={()=>setClassGroupModal(true)} style={{ display:'flex', alignItems:'center', gap:'8px', background:C.amber, color:'#111', padding:'10px 14px', borderRadius:'8px', border:'none', cursor:'pointer', fontWeight:600, fontSize:'13px' }}><Ico.Plus s={16} c="#111" /> Crear Aula Escolar</button>
+                    <button onClick={()=>{ setNewUser({...initialUserState, role:'teacher'}); setUserModal(true); }} style={{ display:'flex', alignItems:'center', gap:'8px', background:C.accent, color:'#fff', padding:'10px 14px', borderRadius:'8px', border:'none', cursor:'pointer', fontWeight:600, fontSize:'13px' }}><Ico.Plus s={16} c="#fff" /> Registrar Profesor</button>
+                    <button onClick={()=>{ setNewUser({...initialUserState, role:'student'}); setUserModal(true); }} style={{ display:'flex', alignItems:'center', gap:'8px', background:C.green, color:'#fff', padding:'10px 14px', borderRadius:'8px', border:'none', cursor:'pointer', fontWeight:600, fontSize:'13px' }}><Ico.Plus s={16} c="#fff" /> Matricular Alumno</button>
                   </div>
                 </Card>
               </div>
@@ -526,7 +524,6 @@ export default function AdminDashboard() {
 
       {/* ── MODALES ───────────────────────────────────────────────────────────── */}
       
-      {/* MODAL: EDITAR MATERIA (AHORA MUESTRA ESTADÍSTICAS) */}
       <Modal open={!!editMateria} onClose={()=>{setEditMateria(null); setModalErr('');}} title="Detalle de la Materia">
         <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
           <div style={{ background:`${C.violet}10`, border:`1px solid ${C.violet}30`, padding:'16px', borderRadius:'12px', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
@@ -547,11 +544,9 @@ export default function AdminDashboard() {
         </div>
       </Modal>
 
-      {/* MODAL: EXPEDIENTE DOCENTE (SÚPER DETALLADO) */}
       <Modal open={!!viewTeacher} onClose={() => {setViewTeacher(null); setAssignMateriaToTeacherId('');}} title={`Expediente Analítico Docente`}>
         <div style={{ display:'flex', flexDirection:'column', gap:'20px' }}>
           
-          {/* Ficha Superior */}
           <div style={{ display:'flex', alignItems:'center', gap:'16px', background:`linear-gradient(135deg, ${C.accent}15, transparent)`, border:`1px solid ${C.accent}30`, padding:'18px', borderRadius:'12px' }}>
             <div style={{ width:56,height:56,borderRadius:'50%',background:C.accent,color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'22px', boxShadow:`0 0 15px ${C.accentSoft}` }}><Ico.Teacher s={28}/></div>
             <div>
@@ -562,7 +557,6 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Tarjetas Analíticas del Profesor */}
           {analyzingStats ? (
             <div style={{ padding:'20px', textAlign:'center', color:C.accent }}><Spinner size={24} color={C.accent} /> Calculando métricas...</div>
           ) : teacherStats && (
@@ -615,7 +609,6 @@ export default function AdminDashboard() {
         </div>
       </Modal>
       
-      {/* MODAL: EXPEDIENTE ALUMNO (SÚPER DETALLADO CON GAMIFICACIÓN) */}
       <Modal open={!!assignModal} onClose={() => { setAssignModal(null); setModalErr(''); setSelectedAulaId(''); setAssignCourseIdToStudent(''); }} title={`Análisis del Estudiante`}>
         <div style={{ display:'flex', flexDirection:'column', gap:'18px' }}>
           
@@ -631,7 +624,6 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Analíticas del Estudiante */}
           {analyzingStats ? (
             <div style={{ padding:'20px', textAlign:'center', color:C.green }}><Spinner size={24} color={C.green} /> Procesando métricas...</div>
           ) : studentStats && (
@@ -705,7 +697,6 @@ export default function AdminDashboard() {
         </div>
       </Modal>
 
-      {/* MODALES DE CREACIÓN BÁSICA */}
       <Modal open={classGroupModal} onClose={()=>{ setClassGroupModal(false); setModalErr(''); }} title="Crear Nueva Aula Escolar">
         <div style={{ display:'flex', flexDirection:'column', gap:'16px' }}>
           <Input label="Nombre del Aula (Ej: 8vo Básico A)" placeholder="8vo Básico A" value={newClassGroup.name} onChange={e=>setNewClassGroup(c=>({...c,name:e.target.value}))} />
