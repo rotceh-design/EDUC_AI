@@ -57,38 +57,52 @@ export default function StudentCourse() {
       
       <main style={{ maxWidth:'900px', margin:'0 auto', padding:'30px 20px', position:'relative', zIndex:1 }}>
         
-        {/* 🚀 CABECERA INMERSIVA DEL CURSO */}
-        <div className="anim-fade-up glass" style={{ position:'relative', overflow:'hidden', display:'flex', flexDirection:'column', gap:'16px', marginBottom:'40px', padding:'30px', borderRadius:'24px', border:`1px solid ${themeColor}40`, boxShadow:`0 10px 40px -10px ${themeColor}30` }}>
-          <div style={{ position:'absolute', top:'-50px', right:'-50px', width:'200px', height:'200px', background:`radial-gradient(circle, ${themeColor}30 0%, transparent 70%)`, filter:'blur(20px)', pointerEvents:'none' }} />
+        {/* 🚀 CABECERA INMERSIVA DEL CURSO (SÓLIDA Y CON LETRAS BLANCAS) */}
+        <div className="anim-fade-up" style={{ position:'relative', overflow:'hidden', display:'flex', flexDirection:'column', gap:'20px', marginBottom:'40px', padding:'30px', borderRadius:'24px', background: themeColor, boxShadow:`0 15px 40px -10px ${themeColor}80` }}>
           
-          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', zIndex:1 }}>
+          {/* Luces decorativas translúcidas de fondo */}
+          <div style={{ position:'absolute', top:'-20%', right:'-10%', width:'300px', height:'300px', background:'radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%)', filter:'blur(20px)', pointerEvents:'none' }} />
+          <div style={{ position:'absolute', bottom:'-30%', left:'-10%', width:'250px', height:'250px', background:'radial-gradient(circle, rgba(0,0,0,0.2) 0%, transparent 70%)', filter:'blur(30px)', pointerEvents:'none' }} />
+          
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', zIndex:1, flexWrap:'wrap', gap:'20px' }}>
             <div>
-              <button onClick={()=>navigate('/student')} style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:`${themeColor}15`, border:`1px solid ${themeColor}30`, borderRadius:'8px', padding:'8px 12px', cursor:'pointer', color:themeColor, fontSize:'12px', fontWeight:700, marginBottom:'16px', transition:'.2s' }} onMouseEnter={e=>e.currentTarget.style.background=`${themeColor}30`} onMouseLeave={e=>e.currentTarget.style.background=`${themeColor}15`}>
+              <button 
+                onClick={()=>navigate('/student')} 
+                style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:'rgba(255,255,255,0.2)', border:'1px solid rgba(255,255,255,0.4)', borderRadius:'10px', padding:'8px 14px', cursor:'pointer', color:'#fff', fontSize:'13px', fontWeight:700, marginBottom:'20px', transition:'.2s', backdropFilter:'blur(5px)' }} 
+                onMouseEnter={e=>e.currentTarget.style.background='rgba(255,255,255,0.3)'} 
+                onMouseLeave={e=>e.currentTarget.style.background='rgba(255,255,255,0.2)'}
+              >
                 ← Panel Principal
               </button>
-              <h1 style={{ fontSize:'28px', marginBottom:'8px', color:'#fff', textShadow:`0 0 15px ${themeColor}` }}>{course?.name}</h1>
-              <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-                <span style={{ color:C.textSub, fontSize:'14px', textTransform:'uppercase', letterSpacing:'0.05em', fontWeight:600 }}>{course?.subject}</span>
-                <span style={{ width:'6px', height:'6px', borderRadius:'50%', background:themeColor }}></span>
-                <span style={{ color:themeColor, fontSize:'14px', fontWeight:700 }}>{course?.grade}</span>
+              
+              <h1 style={{ fontSize:'32px', marginBottom:'8px', color:'#fff', fontWeight:800, letterSpacing:'-0.02em', textShadow:'0 2px 10px rgba(0,0,0,0.2)' }}>
+                {course?.name}
+              </h1>
+              
+              <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
+                <span style={{ color:'rgba(255,255,255,0.9)', fontSize:'15px', textTransform:'uppercase', letterSpacing:'0.05em', fontWeight:700 }}>{course?.subject}</span>
+                <span style={{ width:'6px', height:'6px', borderRadius:'50%', background:'rgba(255,255,255,0.6)' }}></span>
+                <span style={{ color:'#fff', fontSize:'15px', fontWeight:800 }}>{course?.grade}</span>
               </div>
             </div>
             
-            <div style={{ background:C.surface, border:`1px solid ${themeColor}40`, borderRadius:'16px', padding:'15px 20px', textAlign:'center', minWidth:'140px', boxShadow:`inset 0 0 20px ${themeColor}10` }}>
-              <div style={{ fontSize:'11px', color:C.muted, textTransform:'uppercase', fontWeight:800, marginBottom:'8px' }}>Rendimiento</div>
-              <div style={{ fontSize:'28px', fontWeight:800, color: courseProgressPct >= 70 ? C.green : courseProgressPct >= 40 ? C.amber : themeColor, fontFamily:"'Press Start 2P', cursive" }}>
+            {/* Caja de Rendimiento (Cristal oscuro sobre el color) */}
+            <div style={{ background:'rgba(0,0,0,0.2)', border:'1px solid rgba(255,255,255,0.2)', borderRadius:'16px', padding:'15px 24px', textAlign:'center', minWidth:'150px', backdropFilter:'blur(10px)', boxShadow:'0 10px 20px rgba(0,0,0,0.1)' }}>
+              <div style={{ fontSize:'12px', color:'rgba(255,255,255,0.7)', textTransform:'uppercase', fontWeight:800, marginBottom:'8px', letterSpacing:'0.05em' }}>Rendimiento</div>
+              <div style={{ fontSize:'32px', fontWeight:800, color: '#fff', fontFamily:"'Press Start 2P', cursive", textShadow:'0 2px 10px rgba(0,0,0,0.3)' }}>
                 {courseProgressPct}%
               </div>
             </div>
           </div>
 
+          {/* Barra de progreso adaptada */}
           <div style={{ zIndex:1, marginTop:'10px' }}>
-            <div style={{ display:'flex', justifyContent:'space-between', fontSize:'12px', fontWeight:700, color:C.textSub, marginBottom:'8px' }}>
+            <div style={{ display:'flex', justifyContent:'space-between', fontSize:'13px', fontWeight:700, color:'rgba(255,255,255,0.9)', marginBottom:'10px' }}>
               <span>Progreso del Nivel</span>
               <span>{completedMissions} de {totalMissions} Misiones</span>
             </div>
-            <div style={{ height:'8px', background:`${C.border}`, borderRadius:'4px', overflow:'hidden' }}>
-              <div style={{ height:'100%', width:`${courseProgressPct}%`, background: courseProgressPct >= 100 ? C.green : `linear-gradient(90deg, ${themeColor}50, ${themeColor})`, transition:'width 1s ease-in-out', boxShadow:`0 0 10px ${themeColor}` }} />
+            <div style={{ height:'10px', background:'rgba(0,0,0,0.3)', borderRadius:'5px', overflow:'hidden', boxShadow:'inset 0 2px 4px rgba(0,0,0,0.2)' }}>
+              <div style={{ height:'100%', width:`${courseProgressPct}%`, background: '#fff', transition:'width 1s ease-in-out', borderRadius:'5px', boxShadow:'0 0 10px rgba(255,255,255,0.8)' }} />
             </div>
           </div>
         </div>
@@ -170,3 +184,5 @@ export default function StudentCourse() {
     </div>
   );
 }
+
+                            
