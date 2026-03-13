@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { C, STYLES, Icons } from '@/theme';
+import { C, STYLES, Icons, getSubjectColor } from '@/theme';
 import { Card, Btn, Spinner, ProgressBar } from '@/components/ui';
 import Navbar from '@/components/Navbar';
 import { getClass, saveProgress, getProgressByStudent } from '@/services/db';
@@ -17,7 +17,6 @@ export default function StudyView() {
   const [styleId,  setStyleId]  = useState('lector');
   const [progress, setProgress] = useState({});
   
-  // 🎮 SISTEMA DE RECOMPENSAS
   const [xpPopup, setXpPopup] = useState(null);
 
   useEffect(() => {
@@ -45,19 +44,13 @@ export default function StudyView() {
     recordView(sid);
   };
 
-  // 🔥 FUNCIÓN PARA GANAR EXPERIENCIA (XP)
   const handleEarnXP = async (amount) => {
-    // 1. Mostrar animación en pantalla
     setXpPopup(amount);
     setTimeout(() => setXpPopup(null), 2500);
-
-    // 2. Guardar en Base de Datos sumando a lo que ya tiene
     try {
       const userRef = doc(db, 'users', user.uid);
       await updateDoc(userRef, { xp: increment(amount) });
-    } catch (e) {
-      console.error("Error guardando XP:", e);
-    }
+    } catch (e) { console.error(e); }
   };
 
   useEffect(() => { if (cls) recordView('lector'); }, [cls]);
@@ -69,37 +62,34 @@ export default function StudyView() {
   const availableStyles = STYLES.filter(s => content[s.id]);
   const doneCount = availableStyles.filter(s => progress[s.id]).length;
 
+  // 🎨 DETECTAMOS EL COLOR DE LA MATERIA (Guardado en cls.subject)
+  const themeColor = getSubjectColor(cls?.subject || content?.titulo);
+
   return (
     <div style={{ minHeight:'100vh', background:C.bg, position:'relative' }}>
-      <Navbar />
+      
+      {/* 🌌 AURA AMBIENTAL DE ESTUDIO */}
+      <div style={{ position:'fixed', inset:0, background:`radial-gradient(circle at 50% 0%, ${themeColor}15 0%, transparent 80%)`, pointerEvents:'none', zIndex:0 }} />
+      
+      <Navbar customColor={themeColor} />
 
-      {/* ⚡ ANIMACIÓN FLOTANTE DE PUNTOS XP */}
       {xpPopup !== null && (
         <div style={{
-          position:'fixed', top:'50%', left:'50%', transform:'translate(-50%, -50%)',
-          zIndex:9999, pointerEvents:'none', animation:'floatUp 2.5s ease-out forwards',
-          background:`${C.amber}20`, border:`2px solid ${C.amber}`, padding:'15px 30px',
-          borderRadius:'30px', color:C.amber, fontWeight:800, fontSize:'28px',
-          fontFamily:"'Press Start 2P', cursive", textShadow:`0 0 20px ${C.amber}`,
-          backdropFilter:'blur(10px)'
+          position:'fixed', top:'50%', left:'50%', transform:'translate(-50%, -50%)', zIndex:9999, pointerEvents:'none', animation:'floatUp 2.5s ease-out forwards',
+          background:`${C.amber}20`, border:`2px solid ${C.amber}`, padding:'15px 30px', borderRadius:'30px', color:C.amber, fontWeight:800, fontSize:'28px',
+          fontFamily:"'Press Start 2P', cursive", textShadow:`0 0 20px ${C.amber}`, backdropFilter:'blur(10px)'
         }}>
           +{xpPopup} XP!
         </div>
       )}
-      {/* Estilo para que el popup flote y desaparezca */}
       <style>{`
-        @keyframes floatUp {
-          0% { opacity: 0; transform: translate(-50%, -20px) scale(0.8); }
-          20% { opacity: 1; transform: translate(-50%, -50px) scale(1.1); }
-          80% { opacity: 1; transform: translate(-50%, -100px) scale(1); }
-          100% { opacity: 0; transform: translate(-50%, -130px) scale(0.9); }
-        }
+        @keyframes floatUp { 0% { opacity:0; transform:translate(-50%,-20px) scale(0.8); } 20% { opacity:1; transform:translate(-50%,-50px) scale(1.1); } 80% { opacity:1; transform:translate(-50%,-100px) scale(1); } 100% { opacity:0; transform:translate(-50%,-130px) scale(0.9); } }
       `}</style>
 
-      <main style={{ maxWidth:'900px', margin:'0 auto', padding:'24px 20px' }}>
+      <main style={{ maxWidth:'900px', margin:'0 auto', padding:'24px 20px', position:'relative', zIndex:1 }}>
 
         {/* --- HEADER FUTURISTA --- */}
-        <div className="anim-fade-up glass" style={{ borderRadius:'20px', overflow:'hidden', marginBottom:'24px', border:`1px solid ${C.border}`, position:'relative' }}>
+        <div className="anim-fade-up glass" style={{ borderRadius:'20px', overflow:'hidden', marginBottom:'24px', border:`1px solid ${themeColor}40`, boxShadow:`0 10px 40px -10px ${themeColor}30` }}>
           {content.imagenSugerida && (
             <div style={{ width:'100%', height:'220px', position:'relative', backgroundColor: C.surface }}>
               <img 
@@ -112,35 +102,38 @@ export default function StudyView() {
             </div>
           )}
           <div style={{ padding:'24px', position:'relative', zIndex:10, marginTop: content.imagenSugerida ? '-70px' : '0' }}>
-            <button onClick={()=>navigate(-1)} style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:`${C.accent}20`, border:`1px solid ${C.accent}40`, borderRadius:'8px', padding:'6px 12px', cursor:'pointer', color:C.text, fontSize:'12px', fontWeight:600, marginBottom:'16px', backdropFilter:'blur(5px)' }}>← Regresar</button>
-            <h1 className="glow-text" style={{ fontFamily:"'Lora',serif", fontSize:'26px', fontWeight:700, marginBottom:'6px', color:'#fff', textShadow:'0 2px 10px rgba(0,0,0,0.8)' }}>{content.titulo}</h1>
+            <button onClick={()=>navigate(-1)} style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:`${themeColor}20`, border:`1px solid ${themeColor}50`, borderRadius:'8px', padding:'6px 12px', cursor:'pointer', color:C.text, fontSize:'12px', fontWeight:700, marginBottom:'16px', backdropFilter:'blur(5px)', transition:'.2s' }} onMouseEnter={e=>e.currentTarget.style.background=`${themeColor}40`} onMouseLeave={e=>e.currentTarget.style.background=`${themeColor}20`}>← Regresar a la Base</button>
+            <h1 style={{ fontSize:'26px', marginBottom:'6px', color:'#fff', textShadow:`0 0 15px ${themeColor}` }}>{content.titulo}</h1>
             <p style={{ color:C.text, fontSize:'14px', lineHeight:1.5, textShadow:'0 1px 5px rgba(0,0,0,0.8)' }}>{content.resumenBreve}</p>
             
-            <div style={{ marginTop:'20px', display:'flex', alignItems:'center', gap:'12px', flexWrap:'wrap', background:`${C.bg}90`, padding:'12px 16px', borderRadius:'12px', backdropFilter:'blur(10px)' }}>
-              <span style={{ color:C.accent, fontSize:'13px', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.05em' }}>Progreso de la misión</span>
-              <div style={{ flex:1, minWidth:'150px' }}><ProgressBar value={doneCount} max={availableStyles.length} color={C.accent} /></div>
+            <div style={{ marginTop:'20px', display:'flex', alignItems:'center', gap:'12px', flexWrap:'wrap', background:`rgba(11,19,36,0.8)`, padding:'12px 16px', borderRadius:'12px', backdropFilter:'blur(10px)', border:`1px solid ${themeColor}30` }}>
+              <span style={{ color:themeColor, fontSize:'13px', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.05em' }}>Módulos Asimilados</span>
+              <div style={{ flex:1, minWidth:'150px' }}><ProgressBar value={doneCount} max={availableStyles.length} color={themeColor} /></div>
               <span style={{ color:C.text, fontSize:'13px', fontWeight:600 }}>{doneCount} / {availableStyles.length}</span>
             </div>
           </div>
         </div>
 
-        {/* --- SELECTOR NEÓN --- */}
+        {/* --- SELECTOR DE MUNDOS DE APRENDIZAJE --- */}
         <div style={{ display:'flex', gap:'10px', flexWrap:'wrap', marginBottom:'26px', justifyContent:'center' }}>
-          {availableStyles.map(s => (
-            <button key={s.id} onClick={()=>handleStyleChange(s.id)} style={{
-              background: styleId===s.id?s.soft:'rgba(17, 24, 39, 0.6)', 
-              border:`1.5px solid ${styleId===s.id?s.color:C.border}`,
-              borderRadius:'12px', padding:'10px 16px', cursor:'pointer', 
-              color: styleId===s.id?s.color:C.textSub,
-              fontSize:'13px', fontWeight: styleId===s.id?700:600, 
-              transition:'all .2s ease-in-out', display:'flex', alignItems:'center', gap:'8px', 
-              boxShadow: styleId===s.id ? `0 0 15px ${s.soft}` : 'none'
-            }}>
-              <div style={{ width:18, height:18 }}>{s.icon}</div>
-              {s.label}
-              {progress[s.id] && <span style={{ color:s.color, fontSize:'11px', marginLeft:'4px' }}>✓</span>}
-            </button>
-          ))}
+          {availableStyles.map(s => {
+             // Mantenemos los colores semánticos (por ejemplo, Rosa para juegos, verde para visual) para que no sea todo de 1 solo color
+             return (
+              <button key={s.id} onClick={()=>handleStyleChange(s.id)} style={{
+                background: styleId===s.id?s.soft:'rgba(17, 24, 39, 0.6)', 
+                border:`1.5px solid ${styleId===s.id?s.color:C.border}`,
+                borderRadius:'12px', padding:'10px 16px', cursor:'pointer', 
+                color: styleId===s.id?s.color:C.textSub,
+                fontSize:'13px', fontWeight: styleId===s.id?700:600, 
+                transition:'all .2s ease-in-out', display:'flex', alignItems:'center', gap:'8px', 
+                boxShadow: styleId===s.id ? `0 0 15px ${s.soft}` : 'none'
+              }}>
+                <div style={{ width:18, height:18 }}>{s.icon}</div>
+                {s.label}
+                {progress[s.id] && <span style={{ color:s.color, fontSize:'11px', marginLeft:'4px' }}>✓</span>}
+              </button>
+            )
+          })}
         </div>
 
         {/* --- VISTAS DINÁMICAS --- */}
@@ -153,7 +146,6 @@ export default function StudyView() {
                const e={studentId:user.uid,classId,courseId:cls.courseId,schoolId,styleId:'quiz',score:s,totalQ:t}; 
                saveProgress(e); 
                setProgress(p=>({...p,quiz:e})); 
-               // 🎁 RECOMPENSA: 50 XP por respuesta correcta
                if (s > 0) handleEarnXP(s * 50); 
              }} 
           />}
@@ -165,7 +157,10 @@ export default function StudyView() {
   );
 }
 
-// ── VISTAS INDIVIDUALES (Lector, Visual, Audio y Practica se mantienen iguales) ──
+// ── VISTAS INDIVIDUALES (Lector, Visual, Audio, Quiz, Práctica y Memoria) ──
+// Mantienen sus colores semánticos internos para que el texto sea legible
+// y no abrumar al usuario.
+
 function Section({ label, color, icon }) {
   return (
     <div style={{ display:'flex', alignItems:'center', gap:'10px', fontWeight:700, fontSize:'15px', color, textTransform:'uppercase', letterSpacing:'.06em', marginBottom:'16px', paddingBottom:'10px', borderBottom:`1px solid ${color}30` }}>
@@ -351,12 +346,10 @@ function PracticaView({ data }) {
   );
 }
 
-// 🎮 EL JUEGO DE MEMORIA (Da Puntos XP)
 function MemoriaView({ data, onEarnXP }) {
   const [flipped, setFlipped] = useState({});
   const [answers, setAnswers] = useState({});
   const [results, setResults] = useState({});
-  // Evitar que ganen XP infinito por la misma respuesta
   const [awardedXP, setAwardedXP] = useState({});
 
   if (!data) return null;
@@ -370,7 +363,6 @@ function MemoriaView({ data, onEarnXP }) {
     
     setResults(prev => ({ ...prev, [index]: isCorrect }));
     
-    // 🎁 RECOMPENSA: 20 XP por rellenar correctamente (Solo la primera vez)
     if (isCorrect && !awardedXP[index]) {
       setAwardedXP(prev => ({ ...prev, [index]: true }));
       if (onEarnXP) onEarnXP(30); 
@@ -379,7 +371,6 @@ function MemoriaView({ data, onEarnXP }) {
 
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:'24px' }}>
-      
       <Card style={{ background:`linear-gradient(90deg, ${C.pink}20, transparent)`, borderColor:`${C.pink}40`, padding:'20px 24px', display:'flex', alignItems:'center', gap:'16px' }}>
         <div style={{ width:48, height:48, borderRadius:'12px', background:C.pink, color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}><Icons.Memory s={28}/></div>
         <div>

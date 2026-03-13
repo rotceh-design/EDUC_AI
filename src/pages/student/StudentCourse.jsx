@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { C, STYLES, Icons } from '@/theme';
+import { C, STYLES, Icons, getSubjectColor } from '@/theme';
 import { Card, SectionHeader, EmptyState, Spinner, ProgressBar } from '@/components/ui';
 import Navbar from '@/components/Navbar';
 import { getCourse, listenClasses, getProgressByStudent } from '@/services/db';
@@ -28,50 +28,55 @@ export default function StudentCourse() {
       } catch(e) { console.error("Error:", e); }
       setLoading(false);
     })();
-
     const unsub = listenClasses(courseId, setClasses);
     return () => { if (unsub) unsub(); };
   }, [courseId, user.uid, schoolId]);
 
   const getClassProgress = (classId) => progress.filter(p => p.classId === classId);
 
-  // 🎮 CÁLCULO DE PROGRESO GLOBAL DEL CURSO
+  // 🎨 DETECTAMOS EL COLOR DE LA MATERIA
+  const themeColor = getSubjectColor(course?.subject || course?.name);
+
+  // 🎮 CÁLCULO DE PROGRESO
   const totalMissions = classes.length;
   const completedMissions = classes.filter(cls => {
     const cp = getClassProgress(cls.id);
     const quizP = cp.find(p => p.styleId === 'quiz');
-    // Consideramos la misión "Completada" si el quiz se pasó con más del 70%
     return quizP && (quizP.score / quizP.totalQ) >= 0.7;
   }).length;
   
   const courseProgressPct = totalMissions === 0 ? 0 : Math.round((completedMissions / totalMissions) * 100);
 
   return (
-    <div style={{ minHeight:'100vh', background:C.bg }}>
-      <Navbar />
-      <main style={{ maxWidth:'900px', margin:'0 auto', padding:'30px 20px' }}>
+    <div style={{ minHeight:'100vh', background:C.bg, position:'relative' }}>
+      
+      {/* 🌌 AURA AMBIENTAL DE LA MATERIA (Fondo general que tiñe todo el nivel) */}
+      <div style={{ position:'fixed', inset:0, background:`radial-gradient(circle at 50% 0%, ${themeColor}15 0%, transparent 70%)`, pointerEvents:'none', zIndex:0 }} />
+      
+      <Navbar customColor={themeColor} />
+      
+      <main style={{ maxWidth:'900px', margin:'0 auto', padding:'30px 20px', position:'relative', zIndex:1 }}>
         
         {/* 🚀 CABECERA INMERSIVA DEL CURSO */}
-        <div className="anim-fade-up glass" style={{ position:'relative', overflow:'hidden', display:'flex', flexDirection:'column', gap:'16px', marginBottom:'40px', padding:'30px', borderRadius:'24px', border:`1px solid ${C.accent}40`, boxShadow:`0 10px 40px -10px ${C.accent}40` }}>
-          {/* Fondo de decoración */}
-          <div style={{ position:'absolute', top:'-50px', right:'-50px', width:'200px', height:'200px', background:`radial-gradient(circle, ${C.accent}20 0%, transparent 70%)`, filter:'blur(20px)', pointerEvents:'none' }} />
+        <div className="anim-fade-up glass" style={{ position:'relative', overflow:'hidden', display:'flex', flexDirection:'column', gap:'16px', marginBottom:'40px', padding:'30px', borderRadius:'24px', border:`1px solid ${themeColor}40`, boxShadow:`0 10px 40px -10px ${themeColor}30` }}>
+          <div style={{ position:'absolute', top:'-50px', right:'-50px', width:'200px', height:'200px', background:`radial-gradient(circle, ${themeColor}30 0%, transparent 70%)`, filter:'blur(20px)', pointerEvents:'none' }} />
           
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', zIndex:1 }}>
             <div>
-              <button onClick={()=>navigate('/student')} style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:`${C.accent}15`, border:`1px solid ${C.accent}30`, borderRadius:'8px', padding:'8px 12px', cursor:'pointer', color:C.accent, fontSize:'12px', fontWeight:700, marginBottom:'16px', transition:'.2s' }} onMouseEnter={e=>e.currentTarget.style.background=`${C.accent}30`} onMouseLeave={e=>e.currentTarget.style.background=`${C.accent}15`}>
+              <button onClick={()=>navigate('/student')} style={{ display:'inline-flex', alignItems:'center', gap:'6px', background:`${themeColor}15`, border:`1px solid ${themeColor}30`, borderRadius:'8px', padding:'8px 12px', cursor:'pointer', color:themeColor, fontSize:'12px', fontWeight:700, marginBottom:'16px', transition:'.2s' }} onMouseEnter={e=>e.currentTarget.style.background=`${themeColor}30`} onMouseLeave={e=>e.currentTarget.style.background=`${themeColor}15`}>
                 ← Panel Principal
               </button>
-              <h1 className="glow-text" style={{ fontSize:'28px', marginBottom:'8px' }}>{course?.name}</h1>
+              <h1 style={{ fontSize:'28px', marginBottom:'8px', color:'#fff', textShadow:`0 0 15px ${themeColor}` }}>{course?.name}</h1>
               <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
                 <span style={{ color:C.textSub, fontSize:'14px', textTransform:'uppercase', letterSpacing:'0.05em', fontWeight:600 }}>{course?.subject}</span>
-                <span style={{ width:'6px', height:'6px', borderRadius:'50%', background:C.accent }}></span>
-                <span style={{ color:C.accent, fontSize:'14px', fontWeight:700 }}>{course?.grade}</span>
+                <span style={{ width:'6px', height:'6px', borderRadius:'50%', background:themeColor }}></span>
+                <span style={{ color:themeColor, fontSize:'14px', fontWeight:700 }}>{course?.grade}</span>
               </div>
             </div>
             
-            <div style={{ background:C.surface, border:`1px solid ${C.border}`, borderRadius:'16px', padding:'15px 20px', textAlign:'center', minWidth:'140px' }}>
+            <div style={{ background:C.surface, border:`1px solid ${themeColor}40`, borderRadius:'16px', padding:'15px 20px', textAlign:'center', minWidth:'140px', boxShadow:`inset 0 0 20px ${themeColor}10` }}>
               <div style={{ fontSize:'11px', color:C.muted, textTransform:'uppercase', fontWeight:800, marginBottom:'8px' }}>Rendimiento</div>
-              <div style={{ fontSize:'28px', fontWeight:800, color: courseProgressPct >= 70 ? C.green : courseProgressPct >= 40 ? C.amber : C.accent, fontFamily:"'Press Start 2P', cursive" }}>
+              <div style={{ fontSize:'28px', fontWeight:800, color: courseProgressPct >= 70 ? C.green : courseProgressPct >= 40 ? C.amber : themeColor, fontFamily:"'Press Start 2P', cursive" }}>
                 {courseProgressPct}%
               </div>
             </div>
@@ -80,17 +85,17 @@ export default function StudentCourse() {
           <div style={{ zIndex:1, marginTop:'10px' }}>
             <div style={{ display:'flex', justifyContent:'space-between', fontSize:'12px', fontWeight:700, color:C.textSub, marginBottom:'8px' }}>
               <span>Progreso del Nivel</span>
-              <span>{completedMissions} de {totalMissions} Misiones Completadas</span>
+              <span>{completedMissions} de {totalMissions} Misiones</span>
             </div>
             <div style={{ height:'8px', background:`${C.border}`, borderRadius:'4px', overflow:'hidden' }}>
-              <div style={{ height:'100%', width:`${courseProgressPct}%`, background: courseProgressPct >= 100 ? C.green : `linear-gradient(90deg, ${C.accent}, ${C.pink})`, transition:'width 1s ease-in-out', boxShadow:`0 0 10px ${C.pink}` }} />
+              <div style={{ height:'100%', width:`${courseProgressPct}%`, background: courseProgressPct >= 100 ? C.green : `linear-gradient(90deg, ${themeColor}50, ${themeColor})`, transition:'width 1s ease-in-out', boxShadow:`0 0 10px ${themeColor}` }} />
             </div>
           </div>
         </div>
 
         <SectionHeader title="Mapa de Misiones" sub="Selecciona tu próximo desafío de aprendizaje" />
 
-        {loading ? <div style={{ display:'flex',justifyContent:'center',padding:'60px' }}><Spinner size={36} color={C.accent} /></div> :
+        {loading ? <div style={{ display:'flex',justifyContent:'center',padding:'60px' }}><Spinner size={36} color={themeColor} /></div> :
         classes.length === 0 ? <EmptyState emoji="🛰️" title="Sector inexplorado" desc="Tu profesor aún no ha liberado misiones en este cuadrante." /> : (
           <div style={{ display:'grid', gap:'20px' }}>
             {classes.map((cls, i) => {
@@ -99,9 +104,9 @@ export default function StudentCourse() {
               const quizP  = cp.find(p=>p.styleId==='quiz');
               const quizPct= quizP ? Math.round((quizP.score/quizP.totalQ)*100) : null;
               
-              // Lógica de gamificación para la tarjeta
+              // Si la completó brilla en verde, si no, brilla con el color de la asignatura.
               const isMissionComplete = quizPct !== null && quizPct >= 70;
-              const cardColor = isMissionComplete ? C.green : C.border;
+              const cardBorder = isMissionComplete ? C.green : themeColor;
               const bgColor = isMissionComplete ? `${C.green}05` : C.card;
               
               return (
@@ -109,24 +114,21 @@ export default function StudentCourse() {
                   key={cls.id} 
                   onClick={()=>navigate(`/student/class/${cls.id}`)} 
                   className={`anim-fade-up anim-d${Math.min(i+1,5)} glass`} 
-                  style={{ cursor:'pointer', border:`1.5px solid ${cardColor}`, background: bgColor, transition:'all .3s', position:'relative', overflow:'hidden' }} 
-                  onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-4px)'; e.currentTarget.style.boxShadow=`0 10px 20px ${isMissionComplete ? C.greenSoft : C.accentSoft}`; e.currentTarget.style.borderColor = isMissionComplete ? C.green : C.accent; }} 
-                  onMouseLeave={e=>{e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow='none'; e.currentTarget.style.borderColor = cardColor; }}
+                  style={{ cursor:'pointer', border:`1.5px solid ${cardBorder}50`, background: bgColor, transition:'all .3s', position:'relative', overflow:'hidden' }} 
+                  onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-4px)'; e.currentTarget.style.boxShadow=`0 10px 25px ${cardBorder}25`; e.currentTarget.style.borderColor = cardBorder; }} 
+                  onMouseLeave={e=>{e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow='none'; e.currentTarget.style.borderColor = `${cardBorder}50`; }}
                 >
-                  
-                  {/* Número de Nivel de Fondo */}
                   <div style={{ position:'absolute', right:'-10px', bottom:'-20px', fontSize:'100px', fontWeight:900, color:C.surface, zIndex:0, opacity:0.5, pointerEvents:'none', fontFamily:"'Press Start 2P', cursive" }}>
                     {(i+1).toString().padStart(2, '0')}
                   </div>
 
                   <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'20px', flexWrap:'wrap', zIndex:1, position:'relative' }}>
-                    
                     <div style={{ flex:1, minWidth:'250px' }}>
                       <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'8px' }}>
-                        <div style={{ background: isMissionComplete ? C.green : C.accent, color: isMissionComplete ? '#000' : '#fff', padding:'4px 10px', borderRadius:'6px', fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.05em' }}>
+                        <div style={{ background: isMissionComplete ? C.green : themeColor, color: isMissionComplete ? '#000' : '#fff', padding:'4px 10px', borderRadius:'6px', fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.05em' }}>
                           Misión {(i+1).toString().padStart(2, '0')}
                         </div>
-                        {isMissionComplete && <span style={{ color:C.green, fontSize:'12px', fontWeight:700 }}>✓ Completada</span>}
+                        {isMissionComplete && <span style={{ color:C.green, fontSize:'12px', fontWeight:700 }}>✓ Superada</span>}
                       </div>
 
                       <div style={{ fontWeight:700, fontSize:'18px', marginBottom:'10px', color:C.text }}>{cls.content?.titulo||'Misión Clasificada'}</div>
@@ -140,7 +142,6 @@ export default function StudentCourse() {
                         )}
                       </div>
                       
-                      {/* Insignias de estilos explorados */}
                       <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' }}>
                         {STYLES.map(s => {
                           if (!cls.content?.[s.id]) return null;
@@ -155,8 +156,7 @@ export default function StudentCourse() {
                       </div>
                     </div>
 
-                    {/* Botón de Acción Futurista */}
-                    <div style={{ background: isMissionComplete ? 'transparent' : `linear-gradient(135deg, ${C.accent}, ${C.violet})`, border: isMissionComplete ? `2px solid ${C.green}` : 'none', color: isMissionComplete ? C.green : '#fff', padding:'12px 24px', borderRadius:'12px', fontSize:'14px', fontWeight:800, whiteSpace:'nowrap', display:'flex', alignItems:'center', gap:'8px', boxShadow: isMissionComplete ? 'none' : `0 4px 15px ${C.violetSoft}` }}>
+                    <div style={{ background: isMissionComplete ? 'transparent' : themeColor, border: isMissionComplete ? `2px solid ${C.green}` : 'none', color: isMissionComplete ? C.green : '#fff', padding:'12px 24px', borderRadius:'12px', fontSize:'14px', fontWeight:800, whiteSpace:'nowrap', display:'flex', alignItems:'center', gap:'8px', boxShadow: isMissionComplete ? 'none' : `0 4px 15px ${themeColor}60` }}>
                       {isMissionComplete ? 'Repasar Misión' : 'Iniciar Simulación'} <Icons.Practice s={16}/>
                     </div>
 

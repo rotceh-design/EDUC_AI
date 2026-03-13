@@ -1,11 +1,7 @@
-// src/pages/teacher/TeacherDashboard.jsx
-// FIX: usa profile.id (Firestore doc ID) en vez de user.uid para buscar cursos.
-// Los cursos fueron creados con teacherId = profile.id (doc ID aleatorio del admin).
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { C } from '@/theme';
+import { C, getSubjectColor } from '@/theme';
 import { Card, StatCard, SectionHeader, EmptyState, Spinner, Badge, Btn, Alert } from '@/components/ui';
 import Navbar from '@/components/Navbar';
 import { collection, query, where, getDocs } from 'firebase/firestore';
@@ -22,21 +18,19 @@ const Ico = {
   Arrow:   ({s=20,c="currentColor"}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>,
 };
 
-const getRiskColor = (score) => score <= 39 ? C.red : score <= 69 ? C.amber : C.green;
-const getRiskLabel = (score) => score <= 39 ? '🔴 En riesgo' : score <= 69 ? '🟡 Observación' : '🟢 Bien';
-
 export default function TeacherDashboard() {
   const { user, profile, schoolId } = useAuth();
   const navigate = useNavigate();
 
   const [courses,     setCourses]     = useState([]);
   const [classCounts, setClassCounts] = useState({});
-  const [students,    setStudents]    = useState({});  // { courseId: [students] }
+  const [students,    setStudents]    = useState({}); 
   const [loading,     setLoading]     = useState(true);
   const [loadErr,     setLoadErr]     = useState('');
 
-  // FIX CRÍTICO: usa profile.id (Firestore doc ID) para buscar cursos.
-  // Los cursos del admin fueron guardados con teacherId = profile.id, NO user.uid.
+  // 🪄 ESTADO MÁGICO DE HOVER PARA EL PROFESOR
+  const [hoverColor, setHoverColor] = useState(null);
+
   const teacherId = profile?.id || user?.uid;
 
   useEffect(() => {
@@ -47,40 +41,28 @@ export default function TeacherDashboard() {
   const loadData = async () => {
     setLoading(true);
     try {
-      // 1. Buscar cursos por teacherId = Firestore doc ID del profesor
-      const cSnap = await getDocs(
-        query(collection(db, 'courses'), where('teacherId', '==', teacherId))
-      );
+      const cSnap = await getDocs(query(collection(db, 'courses'), where('teacherId', '==', teacherId)));
       const myCoursess = cSnap.docs.map(d => ({ id: d.id, ...d.data() }));
       setCourses(myCoursess);
 
-      // 2. Para cada curso, contar clases publicadas
       const counts = {};
       for (const course of myCoursess) {
-        const clSnap = await getDocs(
-          query(collection(db, 'classes'), where('courseId', '==', course.id))
-        );
+        const clSnap = await getDocs(query(collection(db, 'classes'), where('courseId', '==', course.id)));
         counts[course.id] = clSnap.size;
       }
       setClassCounts(counts);
 
-      // 3. Para cada curso, contar alumnos matriculados en esa aula
       const studs = {};
       for (const course of myCoursess) {
         if (!course.classGroupId) { studs[course.id] = []; continue; }
         const sSnap = await getDocs(
-          query(
-            collection(db, 'users'),
-            where('classGroupId', '==', course.classGroupId),
-            where('role', '==', 'student')
-          )
+          query(collection(db, 'users'), where('classGroupId', '==', course.classGroupId), where('role', '==', 'student'))
         );
         studs[course.id] = sSnap.docs.map(d => ({ id: d.id, ...d.data() }));
       }
       setStudents(studs);
 
     } catch (e) {
-      console.error('TeacherDashboard load error:', e);
       setLoadErr(e.message);
     }
     setLoading(false);
@@ -89,24 +71,33 @@ export default function TeacherDashboard() {
   const totalClasses  = Object.values(classCounts).reduce((a, b) => a + b, 0);
   const totalStudents = Object.values(students).reduce((a, arr) => a + arr.length, 0);
 
-  // Hora del día → saludo
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Buenos días' : hour < 18 ? 'Buenas tardes' : 'Buenas noches';
 
+  // Colores dinámicos del fondo (Si no toca nada, usa Cyan/Violeta)
+  const auraTop = hoverColor || C.accent;
+  const auraBottom = hoverColor || C.violet;
+
   return (
-    <div style={{ minHeight:'100vh', background:C.bg }}>
-      <Navbar />
-      <main style={{ maxWidth:'1000px', margin:'0 auto', padding:'30px 20px' }}>
+    <div style={{ minHeight:'100vh', background:C.bg, position:'relative' }}>
+      
+      {/* 🌌 AURA AMBIENTAL REACTIVA */}
+      <div style={{ position:'fixed', top:'-10%', left:'-10%', width:'60%', height:'60%', background:`radial-gradient(circle, ${auraTop}15 0%, transparent 60%)`, pointerEvents:'none', zIndex:0, transition:'background 0.8s ease' }} />
+      <div style={{ position:'fixed', bottom:'-10%', right:'-10%', width:'50%', height:'50%', background:`radial-gradient(circle, ${auraBottom}10 0%, transparent 60%)`, pointerEvents:'none', zIndex:0, transition:'background 0.8s ease' }} />
+
+      <Navbar customColor={hoverColor || C.accent} />
+      
+      <main style={{ maxWidth:'1000px', margin:'0 auto', padding:'30px 20px', position:'relative', zIndex:1 }}>
 
         {/* ── BIENVENIDA ─────────────────────────────────────────────────────── */}
         <div className="anim-fade-up" style={{ marginBottom:'28px' }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:'12px' }}>
             <div>
               <div style={{ fontSize:'13px', color:C.muted, marginBottom:'4px' }}>{greeting} 👋</div>
-              <h1 style={{ fontFamily:"'Lora',serif", fontSize:'28px', fontWeight:700, marginBottom:'4px' }}>
+              <h1 className="glow-text" style={{ fontSize:'28px', fontWeight:700, marginBottom:'4px' }}>
                 {profile?.name?.split(' ')[0] || 'Profesor'}
               </h1>
-              <p style={{ color:C.muted, fontSize:'13px' }}>
+              <p style={{ color:C.textSub, fontSize:'13px', textTransform:'uppercase', letterSpacing:'0.05em' }}>
                 {profile?.specialty || 'Docente'} · {new Date().toLocaleDateString('es-CL', { weekday:'long', day:'numeric', month:'long' })}
               </p>
             </div>
@@ -126,13 +117,10 @@ export default function TeacherDashboard() {
         </div>
 
         {/* ── MATERIAS ─────────────────────────────────────────────────────── */}
-        <SectionHeader
-          title="Mis Materias"
-          sub={courses.length > 0 ? 'Selecciona una materia para gestionar clases y alumnos' : ''}
-        />
+        <SectionHeader title="Mis Materias" sub={courses.length > 0 ? 'Selecciona una materia para gestionar clases y alumnos' : ''} />
 
         {loading ? (
-          <div style={{ display:'flex', justifyContent:'center', padding:'70px' }}><Spinner size={36} /></div>
+          <div style={{ display:'flex', justifyContent:'center', padding:'70px' }}><Spinner size={36} color={C.accent} /></div>
         ) : courses.length === 0 ? (
           <div>
             <EmptyState emoji="📚" title="Sin materias asignadas" desc="El administrador debe asignarte materias para que puedas comenzar a publicar clases." />
@@ -147,6 +135,8 @@ export default function TeacherDashboard() {
             {courses.map((c, i) => {
               const nClasses  = classCounts[c.id] || 0;
               const nStudents = students[c.id]?.length || 0;
+              const subjColor = getSubjectColor(c.subject || c.name);
+
               return (
                 <button
                   key={c.id}
@@ -154,42 +144,47 @@ export default function TeacherDashboard() {
                   className={`anim-fade-up anim-d${Math.min(i+1,5)}`}
                   style={{ all:'unset', cursor:'pointer', display:'block' }}
                 >
-                  <Card style={{ padding:0, overflow:'hidden', transition:'transform .18s, box-shadow .18s' }}
-                    onMouseEnter={e => { e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow=`0 8px 30px ${C.accent}22`; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform=''; e.currentTarget.style.boxShadow=''; }}>
+                  <Card className="glass" style={{ padding:0, overflow:'hidden', transition:'transform .3s ease, box-shadow .3s ease', border:`1px solid ${C.border}` }}
+                    onMouseEnter={e => { 
+                      setHoverColor(subjColor);
+                      e.currentTarget.style.transform='translateY(-4px)'; 
+                      e.currentTarget.style.boxShadow=`0 10px 30px ${subjColor}20`; 
+                      e.currentTarget.style.borderColor=subjColor; 
+                    }}
+                    onMouseLeave={e => { 
+                      setHoverColor(null);
+                      e.currentTarget.style.transform='translateY(0)'; 
+                      e.currentTarget.style.boxShadow='none'; 
+                      e.currentTarget.style.borderColor=C.border; 
+                    }}>
 
-                    {/* Color top bar */}
-                    <div style={{ height:'5px', background:`linear-gradient(90deg, ${C.accent}, ${C.violet})` }} />
+                    <div style={{ height:'5px', background:`linear-gradient(90deg, ${subjColor}, ${subjColor}80)` }} />
 
                     <div style={{ padding:'22px' }}>
-                      {/* Header */}
                       <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:'18px' }}>
-                        <div style={{ width:48,height:48,borderRadius:'14px',background:`${C.accent}15`,border:`2px solid ${C.accent}25`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'24px' }}>
-                          📖
+                        <div style={{ width:48,height:48,borderRadius:'14px',background:`${subjColor}15`,border:`1px solid ${subjColor}40`,color:subjColor,display:'flex',alignItems:'center',justifyContent:'center' }}>
+                          <Ico.Book s={24} />
                         </div>
                         <Badge color={nClasses>0?C.green:C.muted}>{nClasses} clase{nClasses!==1?'s':''}</Badge>
                       </div>
 
-                      {/* Info */}
                       <div style={{ fontWeight:700, fontSize:'17px', marginBottom:'4px', color:C.text }}>{c.name}</div>
                       <div style={{ color:C.muted, fontSize:'13px', marginBottom:'18px' }}>
                         {c.subject || c.name} · {c.grade || 'Sin nivel'}
                       </div>
 
-                      {/* Stats row */}
                       <div style={{ display:'flex', gap:'12px', marginBottom:'18px' }}>
-                        <div style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', color:C.textSub }}>
-                          <Ico.Users s={13} c={C.textSub}/> {nStudents} alumno{nStudents!==1?'s':''}
+                        <div style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', color:C.textSub, fontWeight:600 }}>
+                          <Ico.Users s={14} c={C.violet}/> {nStudents} alumno{nStudents!==1?'s':''}
                         </div>
-                        <div style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', color:C.textSub }}>
-                          <Ico.Clock s={13} c={C.textSub}/> {nClasses===0?'Sin clases aún':`${nClasses} publicada${nClasses!==1?'s':''}`}
+                        <div style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', color:C.textSub, fontWeight:600 }}>
+                          <Ico.Clock s={14} c={C.green}/> {nClasses===0?'Sin clases aún':`${nClasses} publicada${nClasses!==1?'s':''}`}
                         </div>
                       </div>
 
-                      {/* CTA */}
                       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', paddingTop:'14px', borderTop:`1px solid ${C.border}` }}>
-                        <span style={{ fontSize:'13px', color:C.accent, fontWeight:600 }}>Gestionar materia</span>
-                        <Ico.Arrow s={16} c={C.accent}/>
+                        <span style={{ fontSize:'13px', color:subjColor, fontWeight:700 }}>Gestionar materia</span>
+                        <Ico.Arrow s={16} c={subjColor}/>
                       </div>
                     </div>
                   </Card>
@@ -199,22 +194,21 @@ export default function TeacherDashboard() {
           </div>
         )}
 
-        {/* ── GUÍA RÁPIDA (si no hay clases) ──────────────────────────────── */}
         {!loading && courses.length > 0 && totalClasses === 0 && (
-          <Card className="anim-fade-up" style={{ marginTop:'28px', background:`${C.accent}07`, borderColor:`${C.accent}25`, padding:'22px' }}>
+          <Card className="anim-fade-up glass" style={{ marginTop:'28px', background:`${C.accent}07`, border:`1px solid ${C.accent}30`, padding:'22px' }}>
             <div style={{ fontWeight:700, fontSize:'15px', marginBottom:'14px', color:C.accent }}>
               🚀 ¿Por dónde empezar?
             </div>
             {[
               { n:'1', text:'Selecciona una materia arriba', done: courses.length>0 },
               { n:'2', text:'Publica tu primera clase con IA (PDF o texto)', done: totalClasses>0 },
-              { n:'3', text:'Los alumnos recibirán el contenido en 5 estilos de aprendizaje', done: false },
+              { n:'3', text:'Los alumnos recibirán el contenido en los 6 mundos de aprendizaje', done: false },
             ].map(step => (
               <div key={step.n} style={{ display:'flex', alignItems:'center', gap:'12px', padding:'10px 0', borderBottom:`1px solid ${C.border}` }}>
                 <div style={{ width:28,height:28,borderRadius:'50%',background:step.done?C.green:`${C.accent}20`,color:step.done?'#fff':C.accent,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:'13px',flexShrink:0 }}>
                   {step.done ? '✓' : step.n}
                 </div>
-                <div style={{ fontSize:'13px', color:step.done?C.muted:C.text, textDecoration:step.done?'line-through':'none' }}>{step.text}</div>
+                <div style={{ fontSize:'13px', color:step.done?C.muted:C.text, textDecoration:step.done?'line-through':'none', fontWeight:600 }}>{step.text}</div>
               </div>
             ))}
           </Card>
