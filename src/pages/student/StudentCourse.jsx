@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { C, STYLES, Icons, getSubjectColor } from '@/theme';
-import { Card, SectionHeader, EmptyState, Spinner, ProgressBar } from '@/components/ui';
+import { Card, SectionHeader, EmptyState, Spinner } from '@/components/ui';
 import Navbar from '@/components/Navbar';
 import { getCourse, listenClasses, getProgressByStudent } from '@/services/db';
 
@@ -37,12 +37,12 @@ export default function StudentCourse() {
   // 🎨 DETECTAMOS EL COLOR DE LA MATERIA
   const themeColor = getSubjectColor(course?.subject || course?.name);
 
-  // 🎮 CÁLCULO DE PROGRESO
+  // 🎮 CÁLCULO DE PROGRESO GLOBAL DEL CURSO
   const totalMissions = classes.length;
   const completedMissions = classes.filter(cls => {
     const cp = getClassProgress(cls.id);
     const quizP = cp.find(p => p.styleId === 'quiz');
-    return quizP && (quizP.score / quizP.totalQ) >= 0.7;
+    return quizP && (quizP.score / quizP.totalQ) >= 0.7; // Aprobado si > 70%
   }).length;
   
   const courseProgressPct = totalMissions === 0 ? 0 : Math.round((completedMissions / totalMissions) * 100);
@@ -50,7 +50,7 @@ export default function StudentCourse() {
   return (
     <div style={{ minHeight:'100vh', background:C.bg, position:'relative' }}>
       
-      {/* 🌌 AURA AMBIENTAL DE LA MATERIA (Fondo general que tiñe todo el nivel) */}
+      {/* 🌌 AURA AMBIENTAL DE LA MATERIA */}
       <div style={{ position:'fixed', inset:0, background:`radial-gradient(circle at 50% 0%, ${themeColor}15 0%, transparent 70%)`, pointerEvents:'none', zIndex:0 }} />
       
       <Navbar customColor={themeColor} />
@@ -86,7 +86,7 @@ export default function StudentCourse() {
               </div>
             </div>
             
-            {/* Caja de Rendimiento (Cristal oscuro sobre el color) */}
+            {/* Caja de Rendimiento */}
             <div style={{ background:'rgba(0,0,0,0.2)', border:'1px solid rgba(255,255,255,0.2)', borderRadius:'16px', padding:'15px 24px', textAlign:'center', minWidth:'150px', backdropFilter:'blur(10px)', boxShadow:'0 10px 20px rgba(0,0,0,0.1)' }}>
               <div style={{ fontSize:'12px', color:'rgba(255,255,255,0.7)', textTransform:'uppercase', fontWeight:800, marginBottom:'8px', letterSpacing:'0.05em' }}>Rendimiento</div>
               <div style={{ fontSize:'32px', fontWeight:800, color: '#fff', fontFamily:"'Press Start 2P', cursive", textShadow:'0 2px 10px rgba(0,0,0,0.3)' }}>
@@ -95,7 +95,6 @@ export default function StudentCourse() {
             </div>
           </div>
 
-          {/* Barra de progreso adaptada */}
           <div style={{ zIndex:1, marginTop:'10px' }}>
             <div style={{ display:'flex', justifyContent:'space-between', fontSize:'13px', fontWeight:700, color:'rgba(255,255,255,0.9)', marginBottom:'10px' }}>
               <span>Progreso del Nivel</span>
@@ -118,35 +117,55 @@ export default function StudentCourse() {
               const quizP  = cp.find(p=>p.styleId==='quiz');
               const quizPct= quizP ? Math.round((quizP.score/quizP.totalQ)*100) : null;
               
-              // Si la completó brilla en verde, si no, brilla con el color de la asignatura.
+              // 🔥 LÓGICA DE COLOR DE LAS TARJETAS 🔥
               const isMissionComplete = quizPct !== null && quizPct >= 70;
-              const cardBorder = isMissionComplete ? C.green : themeColor;
-              const bgColor = isMissionComplete ? `${C.green}05` : C.card;
+              const activeColor = isMissionComplete ? C.green : themeColor;
+              const bgColorGlass = isMissionComplete ? `${C.green}08` : `${themeColor}08`; // Fondo translúcido tintado
               
               return (
                 <Card 
                   key={cls.id} 
                   onClick={()=>navigate(`/student/class/${cls.id}`)} 
                   className={`anim-fade-up anim-d${Math.min(i+1,5)} glass`} 
-                  style={{ cursor:'pointer', border:`1.5px solid ${cardBorder}50`, background: bgColor, transition:'all .3s', position:'relative', overflow:'hidden' }} 
-                  onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-4px)'; e.currentTarget.style.boxShadow=`0 10px 25px ${cardBorder}25`; e.currentTarget.style.borderColor = cardBorder; }} 
-                  onMouseLeave={e=>{e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow='none'; e.currentTarget.style.borderColor = `${cardBorder}50`; }}
+                  style={{ 
+                    cursor:'pointer', 
+                    border:`1.5px solid ${activeColor}50`, // Borde visible del color de la materia
+                    background: bgColorGlass, 
+                    transition:'all .3s ease', 
+                    position:'relative', 
+                    overflow:'hidden' 
+                  }} 
+                  onMouseEnter={e=>{
+                    e.currentTarget.style.transform='translateY(-4px)'; 
+                    e.currentTarget.style.boxShadow=`0 10px 30px ${activeColor}30`; 
+                    e.currentTarget.style.borderColor = activeColor; 
+                  }} 
+                  onMouseLeave={e=>{
+                    e.currentTarget.style.transform='translateY(0)'; 
+                    e.currentTarget.style.boxShadow='none'; 
+                    e.currentTarget.style.borderColor = `${activeColor}50`; 
+                  }}
                 >
-                  <div style={{ position:'absolute', right:'-10px', bottom:'-20px', fontSize:'100px', fontWeight:900, color:C.surface, zIndex:0, opacity:0.5, pointerEvents:'none', fontFamily:"'Press Start 2P', cursive" }}>
+                  {/* Número Gigante de Fondo */}
+                  <div style={{ position:'absolute', right:'-10px', bottom:'-20px', fontSize:'100px', fontWeight:900, color:activeColor, zIndex:0, opacity:0.05, pointerEvents:'none', fontFamily:"'Press Start 2P', cursive" }}>
                     {(i+1).toString().padStart(2, '0')}
                   </div>
 
                   <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'20px', flexWrap:'wrap', zIndex:1, position:'relative' }}>
                     <div style={{ flex:1, minWidth:'250px' }}>
-                      <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'8px' }}>
-                        <div style={{ background: isMissionComplete ? C.green : themeColor, color: isMissionComplete ? '#000' : '#fff', padding:'4px 10px', borderRadius:'6px', fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.05em' }}>
+                      
+                      {/* ETIQUETA "MISIÓN" */}
+                      <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'12px' }}>
+                        <div style={{ background: activeColor, color: isMissionComplete ? '#000' : '#fff', padding:'6px 12px', borderRadius:'8px', fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.05em', boxShadow:`0 0 10px ${activeColor}40` }}>
                           Misión {(i+1).toString().padStart(2, '0')}
                         </div>
-                        {isMissionComplete && <span style={{ color:C.green, fontSize:'12px', fontWeight:700 }}>✓ Superada</span>}
+                        {isMissionComplete && <span style={{ color:C.green, fontSize:'12px', fontWeight:800 }}>✓ Superada</span>}
                       </div>
 
+                      {/* TÍTULO DE LA CLASE */}
                       <div style={{ fontWeight:700, fontSize:'18px', marginBottom:'10px', color:C.text }}>{cls.content?.titulo||'Misión Clasificada'}</div>
                       
+                      {/* ESTADÍSTICAS */}
                       <div style={{ color:C.textSub, fontSize:'13px', marginBottom:'16px', display:'flex', gap:'16px', alignItems:'center', flexWrap:'wrap' }}>
                         <span style={{ display:'flex', alignItems:'center', gap:'4px' }}><Icons.Activity s={14}/> {cls.createdAt?.toDate?.().toLocaleDateString('es-CL')}</span>
                         {quizPct!=null && (
@@ -156,12 +175,13 @@ export default function StudentCourse() {
                         )}
                       </div>
                       
+                      {/* INSIGNIAS DE PROGRESO DE ESTILOS */}
                       <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' }}>
                         {STYLES.map(s => {
                           if (!cls.content?.[s.id]) return null;
                           const isDone = done.has(s.id);
                           return (
-                            <span key={s.id} style={{ display:'flex', alignItems:'center', gap:'6px', background:isDone?s.soft:`${C.surface}80`, color:isDone?s.color:C.muted, border:`1px solid ${isDone?s.color:C.borderHover}`, borderRadius:'8px', padding:'6px 12px', fontSize:'11px', fontWeight:700, transition:'all .2s' }}>
+                            <span key={s.id} style={{ display:'flex', alignItems:'center', gap:'6px', background:isDone?s.soft:`rgba(255,255,255,0.03)`, color:isDone?s.color:C.muted, border:`1px solid ${isDone?s.color:C.borderHover}`, borderRadius:'8px', padding:'6px 12px', fontSize:'11px', fontWeight:700, transition:'all .2s' }}>
                               <div style={{ width:14, height:14 }}>{s.icon}</div>
                               {s.label} {isDone && '✓'}
                             </span>
@@ -170,7 +190,23 @@ export default function StudentCourse() {
                       </div>
                     </div>
 
-                    <div style={{ background: isMissionComplete ? 'transparent' : themeColor, border: isMissionComplete ? `2px solid ${C.green}` : 'none', color: isMissionComplete ? C.green : '#fff', padding:'12px 24px', borderRadius:'12px', fontSize:'14px', fontWeight:800, whiteSpace:'nowrap', display:'flex', alignItems:'center', gap:'8px', boxShadow: isMissionComplete ? 'none' : `0 4px 15px ${themeColor}60` }}>
+                    {/* BOTÓN DE ACCIÓN (SE TIÑE DEL COLOR DE LA MATERIA) */}
+                    <div style={{ 
+                      background: isMissionComplete ? 'transparent' : activeColor, 
+                      border: isMissionComplete ? `2px solid ${C.green}` : `1px solid ${activeColor}`, 
+                      color: isMissionComplete ? C.green : '#fff', 
+                      padding:'14px 26px', 
+                      borderRadius:'12px', 
+                      fontSize:'14px', 
+                      fontWeight:800, 
+                      whiteSpace:'nowrap', 
+                      display:'flex', 
+                      alignItems:'center', 
+                      gap:'8px', 
+                      boxShadow: isMissionComplete ? 'none' : `0 4px 15px ${activeColor}60`,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em'
+                    }}>
                       {isMissionComplete ? 'Repasar Misión' : 'Iniciar Simulación'} <Icons.Practice s={16}/>
                     </div>
 
@@ -184,5 +220,3 @@ export default function StudentCourse() {
     </div>
   );
 }
-
-                            
