@@ -70,15 +70,13 @@ Abre: http://localhost:5173
 
 ## 🔑 Variables de entorno (.env.local)
 
-```env
-VITE_FIREBASE_API_KEY=AIzaSyBh5nfpK6UVyrdkxFEFd1J3SZxLd3j-3hY
+VITE_FIREBASE_API_KEY=tu_api_key_aqui
 VITE_FIREBASE_AUTH_DOMAIN=educai-cc1ac.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=educai-cc1ac
 VITE_FIREBASE_STORAGE_BUCKET=educai-cc1ac.firebasestorage.app
-VITE_FIREBASE_MESSAGING_SENDER_ID=760825117799
-VITE_FIREBASE_APP_ID=1:760825117799:web:bb813af4ba62b30e0028c2
-VITE_GEMINI_API_KEY=AIzaSyCFd52drFaMIyd7HeefDy8dgnm42DBbmr0
-```
+VITE_FIREBASE_MESSAGING_SENDER_ID=tu_sender_id
+VITE_FIREBASE_APP_ID=tu_app_id
+VITE_GEMINI_API_KEY=tu_api_key_de_gemini_aqui
 
 ---
 

@@ -10,20 +10,31 @@ export const C = {
   cardHover:   '#162442',
   border:      '#1c2a4a',
   borderHover: '#2a3f6d',
-  accent:      '#38bdf8', // Cyan Neón
+  
+  // 🎨 COLORES BASE Y DE ASIGNATURAS
+  accent:      '#38bdf8', // Cyan Neón (Tecnología / Otros)
   accentSoft:  'rgba(56, 189, 248, 0.12)',
-  green:       '#10b981', // Verde Esmeralda
-  greenSoft:   'rgba(16, 185, 129, 0.12)',
-  amber:       '#f59e0b', // Ámbar Eléctrico
-  amberSoft:   'rgba(245, 158, 11, 0.12)',
-  coral:       '#f43f5e', // Rosa Coral
-  coralSoft:   'rgba(244, 63, 94, 0.12)',
-  violet:      '#8b5cf6', // Violeta Láser
-  violetSoft:  'rgba(139, 92, 246, 0.12)',
-  pink:        '#d946ef', // Magenta / Juego de memoria
-  pinkSoft:    'rgba(217, 70, 239, 0.12)',
-  red:         '#ef4444', // Rojo Alerta
+  red:         '#ef4444', // Rojo Neón (Lenguaje)
   redSoft:     'rgba(239, 68, 68, 0.12)',
+  blue:        '#3b82f6', // Azul Eléctrico (Matemáticas)
+  blueSoft:    'rgba(59, 130, 246, 0.12)',
+  green:       '#10b981', // Verde Esmeralda (Ciencias)
+  greenSoft:   'rgba(16, 185, 129, 0.12)',
+  brown:       '#b45309', // Café / Bronce (Historia)
+  brownSoft:   'rgba(180, 83, 9, 0.12)',
+  yellow:      '#eab308', // Amarillo Brillante (Inglés)
+  yellowSoft:  'rgba(234, 179, 8, 0.12)',
+  
+  // OTROS COLORES SECUNDARIOS PARA JUEGOS Y UI
+  amber:       '#f59e0b', 
+  amberSoft:   'rgba(245, 158, 11, 0.12)',
+  coral:       '#f43f5e', 
+  coralSoft:   'rgba(244, 63, 94, 0.12)',
+  violet:      '#8b5cf6', 
+  violetSoft:  'rgba(139, 92, 246, 0.12)',
+  pink:        '#d946ef', 
+  pinkSoft:    'rgba(217, 70, 239, 0.12)',
+  
   text:        '#f8fafc', // Blanco brillante
   textSub:     '#94a3b8', // Gris azulado
   muted:       '#475569',
@@ -63,6 +74,47 @@ export const getRiskLevel = (score) => {
   if (score <= 39) return RISK_LEVELS.high;
   if (score <= 69) return RISK_LEVELS.medium;
   return RISK_LEVELS.low;
+};
+
+// ── DETECTOR DE COLOR POR ASIGNATURA (REGLAS CLÁSICAS) ────────────────────────
+export const getSubjectColor = (subjectName) => {
+  if (!subjectName) return C.accent; // Color por defecto (Cyan)
+
+  // Limpiamos el texto: a minúsculas y sin tildes para que no falle la búsqueda
+  const str = subjectName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+  // 📕 ROJO: Lenguaje
+  if (str.includes('lenguaje') || str.includes('literatura') || str.includes('filosofia') || str.includes('castellano') || str.includes('comunicacion')) {
+    return C.red;
+  }
+  
+  // 📘 AZUL: Matemáticas
+  if (str.includes('matematica') || str.includes('calculo') || str.includes('algebra') || str.includes('geometria')) {
+    return C.blue;
+  }
+  
+  // 📗 VERDE: Ciencias
+  if (str.includes('ciencia') || str.includes('biologia') || str.includes('quimica') || str.includes('fisica') || str.includes('naturaleza')) {
+    return C.green;
+  }
+  
+  // 🟤 CAFÉ: Historia
+  if (str.includes('historia') || str.includes('geografia') || str.includes('sociales') || str.includes('civica')) {
+    return C.brown;
+  }
+  
+  // 🟡 AMARILLO: Inglés
+  if (str.includes('ingles') || str.includes('idioma')) {
+    return C.yellow;
+  }
+
+  // 🎨 OTROS COLORES (Para ramos que no están en la familia principal)
+  if (str.includes('arte') || str.includes('visuales')) return C.pink; // Magenta para artes
+  if (str.includes('musica') || str.includes('artes')) return C.violet; // Violeta para música
+  if (str.includes('tecnologia') || str.includes('programacion') || str.includes('computacion')) return C.accent; // Cyan para tecnología
+  if (str.includes('fisica') && str.includes('educacion')) return C.amber; // Naranja para Ed. Física
+
+  return C.accent; // Si es un ramo inventado o desconocido, usa Cyan Neón por defecto.
 };
 
 // ── ESTILOS GLOBALES ──────────────────────────────────────────────────────────
