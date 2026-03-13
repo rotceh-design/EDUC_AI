@@ -2,14 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import { useAuth } from '@/contexts/AuthContext';
-import { C, STYLES, Icons } from '@/theme';
+import { C, STYLES, getSubjectColor } from '@/theme';
 import { Btn, Textarea, Alert, Spinner, Card, Badge, SectionHeader, EmptyState, Tabs, Modal, Select } from '@/components/ui';
 import Navbar from '@/components/Navbar';
 import RiskBadge from '@/components/RiskBadge';
 import { getCourse, getCoursesByTeacher, listenClasses, createClass, deleteClass, getUsersBySchool } from '@/services/db';
 import { getAtRiskStudents } from '@/services/analyticsService';
 import { generateLearningStyles, extractTextFromPDF, analyzeDropoutRisk } from '@/services/aiService';
-import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebase/config';
 
 // ── ICONOS SVG FUTURISTAS ───────────────────────────────────────────────────
@@ -25,7 +25,7 @@ const Ico = {
 
 export default function TeacherCourse() {
   const { courseId }    = useParams();
-  const { user, schoolId } = useAuth();
+  const { user, profile, schoolId } = useAuth();
   const navigate        = useNavigate();
   
   const [course, setCourse]         = useState(null);
@@ -50,16 +50,16 @@ export default function TeacherCourse() {
   const [selectedStudentId, setSelectedStudentId] = useState('');
   const [assigning, setAssigning] = useState(false);
 
-  // 🚀 NUEVO: Estado para previsualizar la clase
   const [previewClass, setPreviewClass] = useState(null);
 
   const loadData = async () => {
     if (!courseId || !schoolId || !user?.uid) return;
     setPageLoad(true);
     try {
+      const teacherIdToUse = profile?.id || user.uid;
       const [cData, teacherCourses, s, allS] = await Promise.all([
         getCourse(courseId),
-        getCoursesByTeacher(user.uid), 
+        getCoursesByTeacher(teacherIdToUse), 
         getAtRiskStudents(courseId, schoolId),
         getUsersBySchool(schoolId, 'student')
       ]);
@@ -113,7 +113,7 @@ export default function TeacherCourse() {
           rawContent = `[Documento adjunto: ${file.name}]. ${text}`; 
         }
       } catch (err) { 
-        console.warn("Advertencia al extraer PDF (inofensiva):", err);
+        console.warn("Advertencia al extraer PDF:", err);
         setError('No se pudo extraer el texto del PDF. Intenta copiar y pegar el texto manualmente.'); 
         setLoading(false); return; 
       }
@@ -128,13 +128,14 @@ export default function TeacherCourse() {
     try {
       const safeSubject = course?.subject || course?.name || 'Materia General';
       const safeGrade = course?.grade || 'Nivel Básico';
+      const teacherIdToUse = profile?.id || user.uid;
 
       const content = await generateLearningStyles(rawContent, safeSubject, safeGrade);
       
       await createClass({ 
         courseId, 
         schoolId, 
-        teacherId: user.uid, 
+        teacherId: teacherIdToUse, 
         rawContent, 
         content, 
         subject: safeSubject, 
@@ -142,7 +143,7 @@ export default function TeacherCourse() {
       });
 
       setText(''); setFile(null);
-      setSuccess('✨ ¡Increíble! Gemini ha transformado tu material en 6 estilos de aprendizaje, incluyendo juegos de memoria.');
+      setSuccess('✨ ¡Increíble! Gemini ha transformado tu material en 6 estilos de aprendizaje.');
       setTimeout(() => setSuccess(''), 6000);
     } catch(e) { 
       console.error("Error IA:", e);
@@ -177,13 +178,24 @@ export default function TeacherCourse() {
 
   if (pageLoad) return <div style={{ minHeight:'100vh',background:C.bg,display:'flex',alignItems:'center',justifyContent:'center' }}><Spinner size={40} /></div>;
 
-  return (
-    <div style={{ minHeight:'100vh', background:C.bg }}>
-      <Navbar />
-      <main style={{ maxWidth:'1000px', margin:'0 auto', padding:'30px 20px' }}>
+  // 🎨 DETECTOR INTELIGENTE DE COLOR PARA EL PROFESOR
+  const themeColor = getSubjectColor(course?.subject || course?.name);
 
-        <div className="anim-fade-up" style={{ display:'flex', alignItems:'center', gap:'20px', marginBottom:'30px', background:C.card, padding:'16px 20px', borderRadius:'16px', border:`1px solid ${C.border}` }}>
-          <div style={{ width:48, height:48, borderRadius:'12px', background:C.accent, color:'#fff', display:'flex', alignItems:'center', justifyContent:'center' }}>
+  return (
+    <div style={{ minHeight:'100vh', background:C.bg, position:'relative' }}>
+      
+      {/* 🌌 AURA AMBIENTAL DE LA MATERIA */}
+      <div style={{ position:'fixed', top:'-10%', left:'-10%', width:'60%', height:'60%', background:`radial-gradient(circle, ${themeColor}15 0%, transparent 70%)`, pointerEvents:'none', zIndex:0, transition:'background 0.8s ease' }} />
+      <div style={{ position:'fixed', bottom:'-10%', right:'-10%', width:'50%', height:'50%', background:`radial-gradient(circle, ${themeColor}10 0%, transparent 60%)`, pointerEvents:'none', zIndex:0, transition:'background 0.8s ease' }} />
+
+      {/* Navbar hereda el color del ramo */}
+      <Navbar customColor={themeColor} />
+      
+      <main style={{ maxWidth:'1000px', margin:'0 auto', padding:'30px 20px', position:'relative', zIndex:1 }}>
+
+        {/* CONTROLES SUPERIORES (Se tiñen del color del ramo) */}
+        <div className="anim-fade-up glass" style={{ display:'flex', alignItems:'center', gap:'20px', marginBottom:'30px', padding:'16px 20px', borderRadius:'16px', border:`1px solid ${themeColor}40`, boxShadow:`0 10px 30px -10px ${themeColor}20` }}>
+          <div style={{ width:48, height:48, borderRadius:'12px', background:themeColor, color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:`0 0 15px ${themeColor}60` }}>
             <Ico.Book s={24}/>
           </div>
           <div style={{ flex: 1 }}>
@@ -203,9 +215,9 @@ export default function TeacherCourse() {
           
           <button 
             onClick={() => navigate('/teacher')} 
-            style={{ display:'flex', alignItems:'center', gap:'6px', background:`${C.accent}15`, border:`1px solid ${C.accent}30`, borderRadius:'8px', padding:'10px 14px', cursor:'pointer', color:C.accent, fontSize:'13px', fontWeight:600, transition:'0.2s' }}
-            onMouseEnter={e => e.currentTarget.style.background = `${C.accent}25`}
-            onMouseLeave={e => e.currentTarget.style.background = `${C.accent}15`}
+            style={{ display:'flex', alignItems:'center', gap:'6px', background:`${themeColor}15`, border:`1px solid ${themeColor}30`, borderRadius:'8px', padding:'10px 14px', cursor:'pointer', color:themeColor, fontSize:'13px', fontWeight:600, transition:'.2s' }}
+            onMouseEnter={e => e.currentTarget.style.background = `${themeColor}30`}
+            onMouseLeave={e => e.currentTarget.style.background = `${themeColor}15`}
           >
             ← Volver al Dashboard
           </button>
@@ -216,22 +228,24 @@ export default function TeacherCourse() {
         {/* ── SECCIÓN: GESTIÓN DE CLASES ── */}
         {tab === 'Clases' && (
           <div className="anim-fade-up">
-            <Card style={{ marginBottom:'28px', padding:'24px', border:`1.5px solid ${C.border}` }}>
+            
+            {/* LABORATORIO DE CONTENIDO (Teñido) */}
+            <Card className="glass" style={{ marginBottom:'28px', padding:'24px', border:`1px solid ${themeColor}40` }}>
               <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'18px' }}>
-                <div style={{ padding:'10px', background:`${C.accent}15`, borderRadius:'10px', color:C.accent }}><Ico.Magic s={24}/></div>
+                <div style={{ padding:'10px', background:`${themeColor}20`, borderRadius:'10px', color:themeColor }}><Ico.Magic s={24}/></div>
                 <SectionHeader title="Laboratorio de Contenido IA" sub="Sube un archivo o escribe el tema para que Gemini genere la clase en 6 formatos interactivos." />
               </div>
 
               <div {...getRootProps()} style={{ 
-                border:`2px dashed ${isDragActive ? C.accent : C.border}`, 
+                border:`2px dashed ${isDragActive ? themeColor : C.borderHover}`, 
                 borderRadius:'16px', padding:'30px', textAlign:'center', cursor:'pointer', 
-                transition:'all 0.3s ease', background:isDragActive ? `${C.accent}08` : C.surface,
+                transition:'all 0.3s ease', background:isDragActive ? `${themeColor}10` : C.surface,
                 marginBottom:'20px', position:'relative', overflow:'hidden'
               }}>
                 <input {...getInputProps()} />
                 {file ? (
                   <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'12px' }}>
-                    <div style={{ width:48, height:48, background:C.accent, color:'#fff', borderRadius:'10px', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'20px' }}>
+                    <div style={{ width:48, height:48, background:themeColor, color:'#fff', borderRadius:'10px', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'20px', boxShadow:`0 0 15px ${themeColor}60` }}>
                       {file.type==='application/pdf'?'📄':'🖼️'}
                     </div>
                     <div style={{ textAlign:'left' }}>
@@ -242,7 +256,7 @@ export default function TeacherCourse() {
                   </div>
                 ) : (
                   <>
-                    <div style={{ color:C.accent, marginBottom:'12px' }}><Ico.Upload s={34}/></div>
+                    <div style={{ color:themeColor, marginBottom:'12px' }}><Ico.Upload s={34}/></div>
                     <div style={{ fontWeight:700, color:C.text, fontSize:'15px' }}>{isDragActive ? '¡Suéltalo ahora!' : 'Arrastra un PDF o Imagen de la pizarra'}</div>
                     <div style={{ color:C.muted, fontSize:'12px', marginTop:'6px' }}>Gemini leerá el archivo y creará el contenido por ti.</div>
                   </>
@@ -265,17 +279,19 @@ export default function TeacherCourse() {
               {success && <div style={{ marginBottom:'15px' }}><Alert type="success">{success}</Alert></div>}
 
               {loading ? (
-                <div style={{ display:'flex', alignItems:'center', gap:'18px', padding:'20px', background:`${C.accent}10`, borderRadius:'14px', border:`1px solid ${C.accent}30` }}>
-                  <Spinner size={24} color={C.accent} />
+                <div style={{ display:'flex', alignItems:'center', gap:'18px', padding:'20px', background:`${themeColor}10`, borderRadius:'14px', border:`1px solid ${themeColor}30` }}>
+                  <Spinner size={24} color={themeColor} />
                   <div style={{ flex:1 }}>
-                    <div style={{ fontWeight:700, fontSize:'14px', color:C.accent }}>Gemini está analizando y transformando el material...</div>
-                    <div style={{ height:'6px', background:`${C.accent}20`, borderRadius:'3px', marginTop:'8px', overflow:'hidden' }}>
-                      <div className="progress-bar-ind" style={{ height:'100%', background:C.accent, width:'40%' }}></div>
+                    <div style={{ fontWeight:700, fontSize:'14px', color:themeColor }}>Gemini está analizando y transformando el material...</div>
+                    <div style={{ height:'6px', background:`${themeColor}20`, borderRadius:'3px', marginTop:'8px', overflow:'hidden' }}>
+                      <div className="progress-bar-ind" style={{ height:'100%', background:themeColor, width:'40%' }}></div>
                     </div>
                   </div>
                 </div>
               ) : (
-                <Btn full onClick={handlePublish} icon={<Ico.Magic s={18}/>} size="lg" color={C.accent}>Generar Clase con Inteligencia Artificial</Btn>
+                <button onClick={handlePublish} style={{ width:'100%', padding:'16px', background:themeColor, color:'#fff', border:'none', borderRadius:'12px', fontSize:'15px', fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'10px', boxShadow:`0 4px 15px ${themeColor}60` }}>
+                  <Ico.Magic s={18}/> Generar Clase con IA
+                </button>
               )}
             </Card>
 
@@ -285,11 +301,11 @@ export default function TeacherCourse() {
                 classes.map((cls, i) => (
                   <Card 
                     key={cls.id} 
-                    className={`anim-fade-up anim-d${Math.min(i+1,5)}`} 
-                    style={{ padding:'18px 22px', cursor:'pointer', transition:'.2s' }}
+                    className={`anim-fade-up anim-d${Math.min(i+1,5)} glass`} 
+                    style={{ padding:'18px 22px', cursor:'pointer', transition:'.2s', border:`1px solid ${C.borderHover}` }}
                     onClick={() => setPreviewClass(cls)}
-                    onMouseEnter={e => e.currentTarget.style.borderColor = C.accent}
-                    onMouseLeave={e => e.currentTarget.style.borderColor = 'transparent'}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = themeColor; e.currentTarget.style.boxShadow = `0 0 15px ${themeColor}20`; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = C.borderHover; e.currentTarget.style.boxShadow = 'none'; }}
                   >
                     <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                       <div style={{ flex:1 }}>
@@ -310,7 +326,7 @@ export default function TeacherCourse() {
                         </div>
                       </div>
                       <div style={{ display:'flex', gap:'8px' }}>
-                        <button onClick={(e)=>{ e.stopPropagation(); setPreviewClass(cls); }} style={{ background:`${C.accent}15`, border:'none', color:C.accent, cursor:'pointer', padding:'10px', borderRadius:'10px' }} title="Previsualizar"><Ico.Eye s={16}/></button>
+                        <button onClick={(e)=>{ e.stopPropagation(); setPreviewClass(cls); }} style={{ background:`${themeColor}15`, border:'none', color:themeColor, cursor:'pointer', padding:'10px', borderRadius:'10px' }} title="Previsualizar"><Ico.Eye s={16}/></button>
                         <button onClick={(e)=>{ e.stopPropagation(); if(window.confirm('¿Eliminar clase?')) deleteClass(cls.id); }} style={{ background:`${C.red}15`, border:'none', color:C.red, cursor:'pointer', padding:'10px', borderRadius:'10px' }} title="Eliminar"><Ico.Trash s={16}/></button>
                       </div>
                     </div>
@@ -329,7 +345,7 @@ export default function TeacherCourse() {
                 <Badge color={C.red}>{students.filter(s=>s.metrics?.riskScore<=39).length} en riesgo</Badge>
                 <Badge color={C.green}>{students.length} matriculados</Badge>
               </div>
-              <Btn small color={C.accent} onClick={() => setAssignModal(true)} icon={<Ico.Plus s={14}/>}>Vincular Alumno</Btn>
+              <Btn small color={themeColor} onClick={() => setAssignModal(true)} icon={<Ico.Plus s={14}/>}>Vincular Alumno</Btn>
             </div>
 
             <div style={{ display:'grid', gap:'12px' }}>
@@ -337,10 +353,10 @@ export default function TeacherCourse() {
                 students.map((s, i) => {
                   const m = s.metrics || { riskScore: 100, totalSessions: 0, daysSinceLastActivity: 999 };
                   return (
-                    <Card key={s.id}>
+                    <Card key={s.id} className="glass">
                       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:'15px' }}>
                         <div style={{ display:'flex', alignItems:'center', gap:'15px' }}>
-                          <div style={{ width:44, height:44, borderRadius:'50%', background:`${C.accent}15`, color:C.accent, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700 }}>{s.name[0]}</div>
+                          <div style={{ width:44, height:44, borderRadius:'50%', background:`${themeColor}15`, color:themeColor, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700 }}>{s.name[0]}</div>
                           <div>
                             <div style={{ fontWeight:700, fontSize:'15px' }}>{s.name}</div>
                             <div style={{ fontSize:'12px', color:C.muted, marginTop:'2px' }}>{m.totalSessions} sesiones • Quiz: {m.avgQuizScore || 0}%</div>
@@ -383,7 +399,7 @@ export default function TeacherCourse() {
                 .map(s => ({ value: s.id, label: `${s.name} (${s.rut})` }))
             ]}
           />
-          <Btn full color={C.accent} onClick={handleAssignStudent} loading={assigning} disabled={!selectedStudentId}>Confirmar Matrícula</Btn>
+          <Btn full color={themeColor} onClick={handleAssignStudent} loading={assigning} disabled={!selectedStudentId}>Confirmar Matrícula</Btn>
         </div>
       </Modal>
 
@@ -398,8 +414,8 @@ export default function TeacherCourse() {
             </div>
 
             {previewClass.content?.imagenSugerida && (
-              <div style={{ background:`${C.accent}08`, padding:'15px', borderRadius:'12px', border:`1px solid ${C.accent}20` }}>
-                <div style={{ fontSize:'11px', color:C.accent, textTransform:'uppercase', fontWeight:700, marginBottom:'6px' }}>Prompt de Imagen Generado</div>
+              <div style={{ background:`${themeColor}08`, padding:'15px', borderRadius:'12px', border:`1px solid ${themeColor}20` }}>
+                <div style={{ fontSize:'11px', color:themeColor, textTransform:'uppercase', fontWeight:700, marginBottom:'6px' }}>Prompt de Imagen Generado</div>
                 <div style={{ fontSize:'13px', color:C.text, fontStyle:'italic' }}>"{previewClass.content.imagenSugerida}"</div>
               </div>
             )}
