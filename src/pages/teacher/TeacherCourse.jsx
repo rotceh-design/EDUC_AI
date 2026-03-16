@@ -188,25 +188,28 @@ export default function TeacherCourse() {
       <div style={{ position:'fixed', top:'-10%', left:'-10%', width:'60%', height:'60%', background:`radial-gradient(circle, ${themeColor}15 0%, transparent 70%)`, pointerEvents:'none', zIndex:0, transition:'background 0.8s ease' }} />
       <div style={{ position:'fixed', bottom:'-10%', right:'-10%', width:'50%', height:'50%', background:`radial-gradient(circle, ${themeColor}10 0%, transparent 60%)`, pointerEvents:'none', zIndex:0, transition:'background 0.8s ease' }} />
 
-      {/* Navbar hereda el color del ramo */}
       <Navbar customColor={themeColor} />
       
       <main style={{ maxWidth:'1000px', margin:'0 auto', padding:'30px 20px', position:'relative', zIndex:1 }}>
 
-        {/* CONTROLES SUPERIORES (Se tiñen del color del ramo) */}
-        <div className="anim-fade-up glass" style={{ display:'flex', alignItems:'center', gap:'20px', marginBottom:'30px', padding:'16px 20px', borderRadius:'16px', border:`1px solid ${themeColor}40`, boxShadow:`0 10px 30px -10px ${themeColor}20` }}>
-          <div style={{ width:48, height:48, borderRadius:'12px', background:themeColor, color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:`0 0 15px ${themeColor}60` }}>
-            <Ico.Book s={24}/>
+        {/* 🚀 CONTROLES SUPERIORES (Fondo sólido del color de la materia) */}
+        <div className="anim-fade-up" style={{ display:'flex', alignItems:'center', gap:'20px', marginBottom:'30px', padding:'18px 24px', borderRadius:'16px', background: themeColor, boxShadow:`0 10px 30px -5px ${themeColor}60`, position:'relative', overflow:'hidden' }}>
+          
+          <div style={{ position:'absolute', top:'-50%', right:'-10%', width:'200px', height:'200px', background:'radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%)', filter:'blur(20px)', pointerEvents:'none' }} />
+          
+          <div style={{ width:54, height:54, borderRadius:'14px', background:'rgba(0,0,0,0.15)', color:'#050a10', display:'flex', alignItems:'center', justifyContent:'center', zIndex:1 }}>
+            <Ico.Book s={26}/>
           </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize:'11px', color:C.muted, textTransform:'uppercase', fontWeight:700, letterSpacing:'0.05em', marginBottom:'4px' }}>Materia Actual</div>
+          
+          <div style={{ flex: 1, zIndex:1 }}>
+            <div style={{ fontSize:'11px', color:'rgba(0,0,0,0.6)', textTransform:'uppercase', fontWeight:900, letterSpacing:'0.08em', marginBottom:'4px' }}>Materia Actual</div>
             <select 
               value={courseId}
               onChange={(e) => navigate(`/teacher/course/${e.target.value}`)}
-              style={{ background:'transparent', border:'none', fontSize:'22px', fontWeight:700, color:C.text, outline:'none', cursor:'pointer', width:'100%', fontFamily:"'Lora',serif" }}
+              style={{ background:'transparent', border:'none', fontSize:'24px', fontWeight:900, color:'#050a10', outline:'none', cursor:'pointer', width:'100%', fontFamily:"'Lora',serif", textShadow:'none' }}
             >
               {myCourses.map(c => (
-                <option key={c.id} value={c.id} style={{ fontSize:'16px', background: C.surface }}>
+                <option key={c.id} value={c.id} style={{ fontSize:'16px', background: C.surface, color: C.text }}>
                   {c.name} — {c.grade || 'General'}
                 </option>
               ))}
@@ -215,9 +218,9 @@ export default function TeacherCourse() {
           
           <button 
             onClick={() => navigate('/teacher')} 
-            style={{ display:'flex', alignItems:'center', gap:'6px', background:`${themeColor}15`, border:`1px solid ${themeColor}30`, borderRadius:'8px', padding:'10px 14px', cursor:'pointer', color:themeColor, fontSize:'13px', fontWeight:600, transition:'.2s' }}
-            onMouseEnter={e => e.currentTarget.style.background = `${themeColor}30`}
-            onMouseLeave={e => e.currentTarget.style.background = `${themeColor}15`}
+            style={{ display:'flex', alignItems:'center', gap:'6px', background:'rgba(0,0,0,0.1)', border:'1px solid rgba(0,0,0,0.3)', borderRadius:'10px', padding:'12px 16px', cursor:'pointer', color:'#050a10', fontSize:'13px', fontWeight:800, transition:'.2s', zIndex:1, backdropFilter:'blur(5px)' }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.2)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.1)'}
           >
             ← Volver al Dashboard
           </button>
@@ -229,7 +232,7 @@ export default function TeacherCourse() {
         {tab === 'Clases' && (
           <div className="anim-fade-up">
             
-            {/* LABORATORIO DE CONTENIDO (Teñido) */}
+            {/* LABORATORIO DE CONTENIDO */}
             <Card className="glass" style={{ marginBottom:'28px', padding:'24px', border:`1px solid ${themeColor}40` }}>
               <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'18px' }}>
                 <div style={{ padding:'10px', background:`${themeColor}20`, borderRadius:'10px', color:themeColor }}><Ico.Magic s={24}/></div>
@@ -245,7 +248,7 @@ export default function TeacherCourse() {
                 <input {...getInputProps()} />
                 {file ? (
                   <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'12px' }}>
-                    <div style={{ width:48, height:48, background:themeColor, color:'#fff', borderRadius:'10px', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'20px', boxShadow:`0 0 15px ${themeColor}60` }}>
+                    <div style={{ width:48, height:48, background:themeColor, color:'#050a10', borderRadius:'10px', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'20px', boxShadow:`0 0 15px ${themeColor}60` }}>
                       {file.type==='application/pdf'?'📄':'🖼️'}
                     </div>
                     <div style={{ textAlign:'left' }}>
@@ -289,45 +292,72 @@ export default function TeacherCourse() {
                   </div>
                 </div>
               ) : (
-                <button onClick={handlePublish} style={{ width:'100%', padding:'16px', background:themeColor, color:'#fff', border:'none', borderRadius:'12px', fontSize:'15px', fontWeight:800, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'10px', boxShadow:`0 4px 15px ${themeColor}60` }}>
+                <button onClick={handlePublish} style={{ width:'100%', padding:'16px', background:themeColor, color:'#050a10', border:'none', borderRadius:'12px', fontSize:'15px', fontWeight:900, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'10px', boxShadow:`0 4px 15px ${themeColor}60`, transition:'.2s' }} onMouseEnter={e=>e.currentTarget.style.filter='brightness(1.1)'} onMouseLeave={e=>e.currentTarget.style.filter='none'}>
                   <Ico.Magic s={18}/> Generar Clase con IA
                 </button>
               )}
             </Card>
 
             <SectionHeader title="Bitácora de Clases" sub={`${classes.length} lecciones publicadas en esta materia.`} />
-            <div style={{ display:'grid', gap:'12px' }}>
+            
+            {/* LISTA DE CLASES (Estilo Cyberpunk) */}
+            <div style={{ display:'grid', gap:'20px' }}>
               {classes.length === 0 ? <EmptyState emoji="📭" title="Curso sin contenido" desc="Sube tu primer archivo arriba para comenzar." /> :
                 classes.map((cls, i) => (
                   <Card 
                     key={cls.id} 
                     className={`anim-fade-up anim-d${Math.min(i+1,5)} glass`} 
-                    style={{ padding:'18px 22px', cursor:'pointer', transition:'.2s', border:`1px solid ${C.borderHover}` }}
+                    style={{ 
+                      cursor:'pointer', 
+                      border:`1px solid ${themeColor}50`, 
+                      background: `linear-gradient(145deg, #050a10 0%, ${themeColor}35 100%)`, 
+                      transition:'all .3s ease', 
+                      position:'relative', 
+                      overflow:'hidden',
+                      boxShadow: `inset 0 0 20px rgba(0,0,0,0.8)` 
+                    }} 
                     onClick={() => setPreviewClass(cls)}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = themeColor; e.currentTarget.style.boxShadow = `0 0 15px ${themeColor}20`; }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = C.borderHover; e.currentTarget.style.boxShadow = 'none'; }}
+                    onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-4px)'; e.currentTarget.style.boxShadow=`0 10px 25px ${themeColor}40, inset 0 0 20px rgba(0,0,0,0.8)`; e.currentTarget.style.borderColor = themeColor; }} 
+                    onMouseLeave={e=>{e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow=`inset 0 0 20px rgba(0,0,0,0.8)`; e.currentTarget.style.borderColor = `${themeColor}50`; }}
                   >
-                    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-                      <div style={{ flex:1 }}>
-                        <div style={{ fontWeight:700, fontSize:'16px', color:C.text, display:'flex', alignItems:'center', gap:'8px' }}>
-                          {cls.content?.titulo || 'Lección sin título'}
-                        </div>
-                        <div style={{ color:C.muted, fontSize:'12px', marginTop:'4px' }}>Publicado el {cls.createdAt?.toDate?.().toLocaleDateString('es-CL')}</div>
+                    <div style={{ position:'absolute', right:'-10px', bottom:'-20px', fontSize:'100px', fontWeight:900, color:themeColor, zIndex:0, opacity:0.05, pointerEvents:'none', fontFamily:"'Press Start 2P', cursive" }}>
+                      {(i+1).toString().padStart(2, '0')}
+                    </div>
+
+                    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'20px', flexWrap:'wrap', zIndex:1, position:'relative' }}>
+                      <div style={{ flex:1, minWidth:'250px' }}>
                         
-                        <div style={{ display:'flex', gap:'8px', marginTop:'12px', flexWrap:'wrap' }}>
+                        <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'12px' }}>
+                          <div style={{ background: themeColor, color: '#050a10', padding:'6px 12px', borderRadius:'8px', fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.05em', boxShadow:`0 0 10px ${themeColor}40` }}>
+                            Misión {(i+1).toString().padStart(2, '0')}
+                          </div>
+                          <span style={{ color:C.muted, fontSize:'12px', fontWeight:600 }}>Publicado: {cls.createdAt?.toDate?.().toLocaleDateString('es-CL')}</span>
+                        </div>
+
+                        <div style={{ fontWeight:700, fontSize:'18px', marginBottom:'12px', color:C.text }}>
+                          {cls.content?.titulo || 'Misión sin título'}
+                        </div>
+                        
+                        <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' }}>
                           {STYLES.map(s => {
                             if (!cls.content?.[s.id]) return null;
                             return (
-                              <span key={s.id} title={s.label} style={{ display:'flex', alignItems:'center', gap:'4px', background:s.soft, color:s.color, borderRadius:'6px', padding:'4px 8px', fontSize:'12px', fontWeight:600 }}>
-                                {s.icon} {s.label}
+                              <span key={s.id} title={s.label} style={{ display:'flex', alignItems:'center', gap:'6px', background:`rgba(0,0,0,0.4)`, color:C.muted, border:`1px solid ${C.borderHover}`, borderRadius:'8px', padding:'6px 12px', fontSize:'11px', fontWeight:700 }}>
+                                <div style={{ width:14, height:14, color:s.color }}>{s.icon}</div>
+                                {s.label}
                               </span>
                             )
                           })}
                         </div>
                       </div>
-                      <div style={{ display:'flex', gap:'8px' }}>
-                        <button onClick={(e)=>{ e.stopPropagation(); setPreviewClass(cls); }} style={{ background:`${themeColor}15`, border:'none', color:themeColor, cursor:'pointer', padding:'10px', borderRadius:'10px' }} title="Previsualizar"><Ico.Eye s={16}/></button>
-                        <button onClick={(e)=>{ e.stopPropagation(); if(window.confirm('¿Eliminar clase?')) deleteClass(cls.id); }} style={{ background:`${C.red}15`, border:'none', color:C.red, cursor:'pointer', padding:'10px', borderRadius:'10px' }} title="Eliminar"><Ico.Trash s={16}/></button>
+
+                      <div style={{ display:'flex', gap:'10px' }}>
+                        <button onClick={(e)=>{ e.stopPropagation(); setPreviewClass(cls); }} style={{ display:'flex', alignItems:'center', gap:'6px', background:`${themeColor}15`, border:`1px solid ${themeColor}40`, color:themeColor, cursor:'pointer', padding:'10px 14px', borderRadius:'10px', fontWeight:800, fontSize:'12px', transition:'.2s' }} onMouseEnter={e=>e.currentTarget.style.background=`${themeColor}30`} onMouseLeave={e=>e.currentTarget.style.background=`${themeColor}15`} title="Previsualizar">
+                          <Ico.Eye s={14}/> Revisar
+                        </button>
+                        <button onClick={(e)=>{ e.stopPropagation(); if(window.confirm('¿Eliminar esta misión de forma permanente?')) deleteClass(cls.id); }} style={{ display:'flex', alignItems:'center', gap:'6px', background:`${C.red}15`, border:`1px solid ${C.red}40`, color:C.red, cursor:'pointer', padding:'10px 14px', borderRadius:'10px', fontWeight:800, fontSize:'12px', transition:'.2s' }} onMouseEnter={e=>e.currentTarget.style.background=`${C.red}30`} onMouseLeave={e=>e.currentTarget.style.background=`${C.red}15`} title="Eliminar">
+                          <Ico.Trash s={14}/>
+                        </button>
                       </div>
                     </div>
                   </Card>
@@ -353,10 +383,10 @@ export default function TeacherCourse() {
                 students.map((s, i) => {
                   const m = s.metrics || { riskScore: 100, totalSessions: 0, daysSinceLastActivity: 999 };
                   return (
-                    <Card key={s.id} className="glass">
+                    <Card key={s.id} className="glass" style={{ borderLeft:`4px solid ${m.riskScore<=39?C.red:m.riskScore<=69?C.amber:C.green}` }}>
                       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:'15px' }}>
                         <div style={{ display:'flex', alignItems:'center', gap:'15px' }}>
-                          <div style={{ width:44, height:44, borderRadius:'50%', background:`${themeColor}15`, color:themeColor, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700 }}>{s.name[0]}</div>
+                          <div style={{ width:44, height:44, borderRadius:'50%', background:`${themeColor}15`, border:`1px solid ${themeColor}40`, color:themeColor, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700 }}>{s.name[0]}</div>
                           <div>
                             <div style={{ fontWeight:700, fontSize:'15px' }}>{s.name}</div>
                             <div style={{ fontSize:'12px', color:C.muted, marginTop:'2px' }}>{m.totalSessions} sesiones • Quiz: {m.avgQuizScore || 0}%</div>
@@ -364,13 +394,13 @@ export default function TeacherCourse() {
                         </div>
                         <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
                           <RiskBadge score={m.riskScore} />
-                          <Btn small outline color={C.violet} loading={analyzing===s.id} onClick={()=>handleAnalyzeStudent(s)}>Analizar con IA</Btn>
+                          <Btn small outline color={themeColor} loading={analyzing===s.id} onClick={()=>handleAnalyzeStudent(s)}>Analizar con IA</Btn>
                         </div>
                       </div>
                       {aiInsight?.studentId === s.id && (
-                        <div className="anim-fade-up" style={{ marginTop:'15px', padding:'15px', background:`${C.violet}05`, border:`1px solid ${C.violet}20`, borderRadius:'12px', fontSize:'13px', lineHeight:'1.6' }}>
-                          <strong>Reporte Gemini:</strong> {aiInsight.data.resumen}
-                          <div style={{ color:C.green, fontWeight:600, marginTop:'8px' }}>✓ {aiInsight.data.recomendaciones?.[0]}</div>
+                        <div className="anim-fade-up" style={{ marginTop:'15px', padding:'15px', background:`${C.violet}10`, border:`1px solid ${C.violet}30`, borderRadius:'12px', fontSize:'13px', lineHeight:'1.6' }}>
+                          <strong style={{ color:C.violet }}>Reporte Gemini:</strong> <span style={{ color:C.text }}>{aiInsight.data.resumen}</span>
+                          <div style={{ color:C.green, fontWeight:700, marginTop:'8px' }}>✓ Recomendación: {aiInsight.data.recomendaciones?.[0]}</div>
                         </div>
                       )}
                     </Card>
@@ -399,42 +429,42 @@ export default function TeacherCourse() {
                 .map(s => ({ value: s.id, label: `${s.name} (${s.rut})` }))
             ]}
           />
-          <Btn full color={themeColor} onClick={handleAssignStudent} loading={assigning} disabled={!selectedStudentId}>Confirmar Matrícula</Btn>
+          <Btn full color={themeColor} onClick={handleAssignStudent} loading={assigning} disabled={!selectedStudentId}><strong style={{color:'#000'}}>Confirmar Matrícula</strong></Btn>
         </div>
       </Modal>
 
       {/* MODAL: PREVISUALIZACIÓN DE LA CLASE CREADA */}
-      <Modal open={!!previewClass} onClose={() => setPreviewClass(null)} title="Previsualización de la Clase">
+      <Modal open={!!previewClass} onClose={() => setPreviewClass(null)} title="Vista Previa de la Misión">
         {previewClass && (
           <div style={{ display:'flex', flexDirection:'column', gap:'20px', maxHeight:'70vh', overflowY:'auto', paddingRight:'5px' }}>
             
-            <div style={{ background:C.surface, padding:'20px', borderRadius:'12px', border:`1px solid ${C.border}` }}>
-              <h2 style={{ fontWeight:700, fontSize:'20px', color:C.text, marginBottom:'10px' }}>{previewClass.content?.titulo}</h2>
+            <div style={{ background:C.surface, padding:'20px', borderRadius:'12px', border:`1px solid ${themeColor}40`, borderLeft:`4px solid ${themeColor}` }}>
+              <h2 style={{ fontWeight:800, fontSize:'20px', color:C.text, marginBottom:'10px' }}>{previewClass.content?.titulo}</h2>
               <p style={{ color:C.textSub, fontSize:'14px', lineHeight:'1.6' }}>{previewClass.content?.resumenBreve}</p>
             </div>
 
             {previewClass.content?.imagenSugerida && (
               <div style={{ background:`${themeColor}08`, padding:'15px', borderRadius:'12px', border:`1px solid ${themeColor}20` }}>
-                <div style={{ fontSize:'11px', color:themeColor, textTransform:'uppercase', fontWeight:700, marginBottom:'6px' }}>Prompt de Imagen Generado</div>
+                <div style={{ fontSize:'11px', color:themeColor, textTransform:'uppercase', fontWeight:800, marginBottom:'6px', letterSpacing:'0.05em' }}>Prompt de Imagen Generado</div>
                 <div style={{ fontSize:'13px', color:C.text, fontStyle:'italic' }}>"{previewClass.content.imagenSugerida}"</div>
               </div>
             )}
 
             <div style={{ borderTop:`1px solid ${C.border}`, paddingTop:'15px' }}>
-              <div style={{ fontSize:'13px', fontWeight:600, color:C.muted, textTransform:'uppercase', marginBottom:'12px' }}>Módulos de Aprendizaje Creados:</div>
+              <div style={{ fontSize:'13px', fontWeight:700, color:C.muted, textTransform:'uppercase', marginBottom:'12px' }}>Módulos de Aprendizaje Creados:</div>
               <div style={{ display:'flex', flexDirection:'column', gap:'10px' }}>
                 {STYLES.map(s => {
                   const hasContent = !!previewClass.content?.[s.id];
                   if (!hasContent) return null;
                   return (
-                    <div key={s.id} style={{ display:'flex', alignItems:'center', gap:'12px', background:C.card, padding:'12px 16px', borderRadius:'8px', border:`1px solid ${C.border}` }}>
+                    <div key={s.id} style={{ display:'flex', alignItems:'center', gap:'12px', background:C.card, padding:'12px 16px', borderRadius:'8px', border:`1px solid ${C.borderHover}` }}>
                       <div style={{ width:32, height:32, borderRadius:'8px', background:s.soft, color:s.color, display:'flex', alignItems:'center', justifyContent:'center' }}>{s.icon}</div>
                       <div>
                         <div style={{ fontWeight:700, fontSize:'14px', color:C.text }}>{s.label}</div>
                         <div style={{ color:C.textSub, fontSize:'12px' }}>{s.desc}</div>
                       </div>
                       <div style={{ marginLeft:'auto' }}>
-                        <Badge color={C.green}>Generado ✓</Badge>
+                        <Badge color={C.green}>Completado ✓</Badge>
                       </div>
                     </div>
                   )
