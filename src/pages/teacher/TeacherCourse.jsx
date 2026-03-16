@@ -300,7 +300,7 @@ export default function TeacherCourse() {
 
             <SectionHeader title="Bitácora de Clases" sub={`${classes.length} lecciones publicadas en esta materia.`} />
             
-            {/* LISTA DE CLASES (Estilo Cyberpunk) */}
+            {/* LISTA DE CLASES (Estilo Cyberpunk oscuro como el estudiante) */}
             <div style={{ display:'grid', gap:'20px' }}>
               {classes.length === 0 ? <EmptyState emoji="📭" title="Curso sin contenido" desc="Sube tu primer archivo arriba para comenzar." /> :
                 classes.map((cls, i) => (
