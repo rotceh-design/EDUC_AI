@@ -192,7 +192,7 @@ export default function TeacherCourse() {
       
       <main style={{ maxWidth:'1000px', margin:'0 auto', padding:'30px 20px', position:'relative', zIndex:1 }}>
 
-        {/* 🚀 CONTROLES SUPERIORES (Fondo sólido del color de la materia) */}
+        {/* 🚀 CONTROLES SUPERIORES (Fondo sólido del color de la materia con contraste Cyberpunk) */}
         <div className="anim-fade-up" style={{ display:'flex', alignItems:'center', gap:'20px', marginBottom:'30px', padding:'18px 24px', borderRadius:'16px', background: themeColor, boxShadow:`0 10px 30px -5px ${themeColor}60`, position:'relative', overflow:'hidden' }}>
           
           <div style={{ position:'absolute', top:'-50%', right:'-10%', width:'200px', height:'200px', background:'radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%)', filter:'blur(20px)', pointerEvents:'none' }} />
