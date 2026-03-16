@@ -160,7 +160,6 @@ export default function StudentCourse() {
                 <Card 
                   key={cls.id} 
                   onClick={()=>navigate(`/student/class/${cls.id}`)} 
-<<<<<<< HEAD
                   className={`anim-fade-up anim-d${Math.min(i+1,5)}`} 
                   style={{ 
                     cursor:'pointer', 
@@ -175,44 +174,14 @@ export default function StudentCourse() {
                   onMouseLeave={e=>{e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow=`inset 0 0 20px rgba(0,0,0,0.8)`; e.currentTarget.style.borderColor = `${activeColor}60`; }}
                 >
                   <div style={{ position:'absolute', right:'-10px', bottom:'-20px', fontSize:'100px', fontWeight:900, color:activeColor, zIndex:0, opacity:0.08, pointerEvents:'none', fontFamily:"'Press Start 2P', cursive" }}>
-=======
-                  className={`anim-fade-up anim-d${Math.min(i+1,5)} glass`} 
-                  style={{ 
-                    cursor:'pointer', 
-                    border:`1.5px solid ${activeColor}50`, // Borde visible del color de la materia
-                    background: bgColorGlass, 
-                    transition:'all .3s ease', 
-                    position:'relative', 
-                    overflow:'hidden' 
-                  }} 
-                  onMouseEnter={e=>{
-                    e.currentTarget.style.transform='translateY(-4px)'; 
-                    e.currentTarget.style.boxShadow=`0 10px 30px ${activeColor}30`; 
-                    e.currentTarget.style.borderColor = activeColor; 
-                  }} 
-                  onMouseLeave={e=>{
-                    e.currentTarget.style.transform='translateY(0)'; 
-                    e.currentTarget.style.boxShadow='none'; 
-                    e.currentTarget.style.borderColor = `${activeColor}50`; 
-                  }}
-                >
-                  {/* Número Gigante de Fondo */}
-                  <div style={{ position:'absolute', right:'-10px', bottom:'-20px', fontSize:'100px', fontWeight:900, color:activeColor, zIndex:0, opacity:0.05, pointerEvents:'none', fontFamily:"'Press Start 2P', cursive" }}>
->>>>>>> db186aad15943c4ce4f4e9f70e8ac883cad92595
                     {(i+1).toString().padStart(2, '0')}
                   </div>
 
                   <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'20px', flexWrap:'wrap', zIndex:1, position:'relative' }}>
                     <div style={{ flex:1, minWidth:'250px' }}>
                       
-<<<<<<< HEAD
                       <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'12px' }}>
                         <div style={{ background: activeColor, color: isMissionComplete ? '#000' : '#050a10', padding:'6px 12px', borderRadius:'8px', fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.05em', boxShadow:`0 0 10px ${activeColor}40` }}>
-=======
-                      {/* ETIQUETA "MISIÓN" */}
-                      <div style={{ display:'flex', alignItems:'center', gap:'12px', marginBottom:'12px' }}>
-                        <div style={{ background: activeColor, color: isMissionComplete ? '#000' : '#fff', padding:'6px 12px', borderRadius:'8px', fontSize:'11px', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.05em', boxShadow:`0 0 10px ${activeColor}40` }}>
->>>>>>> db186aad15943c4ce4f4e9f70e8ac883cad92595
                           Misión {(i+1).toString().padStart(2, '0')}
                         </div>
                         {isMissionComplete && <span style={{ color:C.green, fontSize:'12px', fontWeight:800 }}>✓ Superada</span>}
@@ -237,11 +206,7 @@ export default function StudentCourse() {
                           if (!cls.content?.[s.id]) return null;
                           const isDone = done.has(s.id);
                           return (
-<<<<<<< HEAD
                             <span key={s.id} style={{ display:'flex', alignItems:'center', gap:'6px', background:isDone?s.soft:`rgba(0,0,0,0.4)`, color:isDone?s.color:C.muted, border:`1px solid ${isDone?s.color:C.borderHover}`, borderRadius:'8px', padding:'6px 12px', fontSize:'11px', fontWeight:700, transition:'all .2s' }}>
-=======
-                            <span key={s.id} style={{ display:'flex', alignItems:'center', gap:'6px', background:isDone?s.soft:`rgba(255,255,255,0.03)`, color:isDone?s.color:C.muted, border:`1px solid ${isDone?s.color:C.borderHover}`, borderRadius:'8px', padding:'6px 12px', fontSize:'11px', fontWeight:700, transition:'all .2s' }}>
->>>>>>> db186aad15943c4ce4f4e9f70e8ac883cad92595
                               <div style={{ width:14, height:14 }}>{s.icon}</div>
                               {s.label} {isDone && '✓'}
                             </span>
@@ -250,18 +215,10 @@ export default function StudentCourse() {
                       </div>
                     </div>
 
-<<<<<<< HEAD
                     <div style={{ 
                       background: isMissionComplete ? 'transparent' : activeColor, 
                       border: isMissionComplete ? `2px solid ${C.green}` : `1px solid ${activeColor}`, 
                       color: isMissionComplete ? C.green : '#050a10', 
-=======
-                    {/* BOTÓN DE ACCIÓN (SE TIÑE DEL COLOR DE LA MATERIA) */}
-                    <div style={{ 
-                      background: isMissionComplete ? 'transparent' : activeColor, 
-                      border: isMissionComplete ? `2px solid ${C.green}` : `1px solid ${activeColor}`, 
-                      color: isMissionComplete ? C.green : '#fff', 
->>>>>>> db186aad15943c4ce4f4e9f70e8ac883cad92595
                       padding:'14px 26px', 
                       borderRadius:'12px', 
                       fontSize:'14px', 
