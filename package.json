@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
     "firebase": "^10.12.0",
     "pdfjs-dist": "^4.4.168",
     "react": "^18.3.1",
